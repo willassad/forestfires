@@ -1,4 +1,5 @@
 # Import dataset
+import csv
 from dataclasses import dataclass
 from typing import List
 
@@ -59,25 +60,35 @@ class ForestFireData:
     area: float
 
 
-def process_csv(file: str) -> List[ForestFireData]:
+def process_csv(file_path: str) -> List[ForestFireData]:
     """Process a csv file into a list of ForestFireData"""
-    pass
+    with open(file_path) as file:
+        reader = csv.reader(file)
+
+        # skip header
+        next(reader)
+
+        data_so_far = []  # ACCUMULATOR: update list of data
+        for row in reader:
+            # process each row and add to data_so_far
+            data_so_far.append(row_to_forest_data(row))
+
+    return data_so_far
 
 
-def row_to_forest_data(row: str) -> ForestFireData:
+def row_to_forest_data(row: List[str]) -> ForestFireData:
     """ Convert a row of forestfires.csv into ForestFireData
 
-    >>> sample_row = '7,4,oct,tue,90.6,35.4,669.1,6.7,18,33,0.9,0,0'
+    >>> sample_row = ['7','4','oct','tue','90.6','35.4','669.1','6.7','18','33','0.9','0','0']
     >>> row_to_forest_data(sample_row)
     ForestFireData(month=10, day=2, ffmc=90.6, dmc=35.4, dc=669.1,
                    isi=6.7, temperature=18.0, humidity=33.0,
                    wind=0.9, rain=0.0, area=0.0)
     """
-    lst = row.split(',')
-    month = months_dict[lst[2]]
-    day = days_dict[lst[3]]
+    month = months_dict[row[2]]
+    day = days_dict[row[3]]
 
-    return ForestFireData(month=month, day=day, ffmc=float(lst[4]), dmc=float(lst[5]),
-                          dc=float(lst[6]), isi=float(lst[7]), temperature=float(lst[8]),
-                          humidity=float(lst[9]), wind=float(lst[10]),
-                          rain=float(lst[11]), area=float(lst[12]))
+    return ForestFireData(month=month, day=day, ffmc=float(row[4]), dmc=float(row[5]),
+                          dc=float(row[6]), isi=float(row[7]), temperature=float(row[8]),
+                          humidity=float(row[9]), wind=float(row[10]),
+                          rain=float(row[11]), area=float(row[12]))
