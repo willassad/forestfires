@@ -1,7 +1,22 @@
-# This is a sample Python script.
+# Import dataset
+from dataclasses import dataclass
 
-# Press ⇧F10 to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
+
+@dataclass
+class ForestFireData:
+    """Description
+
+    Attributes:
+        -
+
+    Representation Invariants:
+     -
+
+    Sample Usage:
+    >>>
+
+    """
+    
 
 
 def print_hi(name):
