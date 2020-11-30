@@ -39,7 +39,7 @@ class ForestFireData:
                                   isi=6.7, temperature=14.6, humiditiy=33, wind=1.3,\
                                   rain=0, area=0)
     """
-    
+
     month: int
     day: int
     ffmc: float
