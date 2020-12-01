@@ -110,7 +110,7 @@ def process_temperatures(file_path: str, city: str) -> List[PortugalTemperatureD
 
         data_so_far = []  # ACCUMULATOR: update list of data
         for row in reader:
-            if city in row:
+            if city in row and row[1] != '':
                 # process each row and add to data_so_far
                 data_so_far.append(row_to_temperature_data(row))
 
@@ -121,6 +121,7 @@ def row_to_temperature_data(row: List[str]) -> PortugalTemperatureData:
     """ Convert a row of forestfires.csv into PortugalTemperatureData
     """
     time_data = [int(x) for x in row[0].split('-')]
+    print(row)
 
     return PortugalTemperatureData(timestamp=datetime(time_data[0], time_data[1],
                                    time_data[2]), city=row[3], average_temp=float(row[1]),
