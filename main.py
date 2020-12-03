@@ -1,8 +1,11 @@
-# Import dataset
+# import dataset
 import csv
 from dataclasses import dataclass
 from datetime import datetime
 from typing import List
+import plotly.express as px
+import pandas as pd
+
 
 months_dict = {'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6,
                'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12}
@@ -110,7 +113,7 @@ def process_temperatures(file_path: str, city: str) -> List[PortugalTemperatureD
 
         data_so_far = []  # ACCUMULATOR: update list of data
         for row in reader:
-            if city in row and row[1] != '':
+            if city in row:
                 # process each row and add to data_so_far
                 data_so_far.append(row_to_temperature_data(row))
 
@@ -121,11 +124,156 @@ def row_to_temperature_data(row: List[str]) -> PortugalTemperatureData:
     """ Convert a row of forestfires.csv into PortugalTemperatureData
     """
     time_data = [int(x) for x in row[0].split('-')]
-    print(row)
 
     return PortugalTemperatureData(timestamp=datetime(time_data[0], time_data[1],
                                    time_data[2]), city=row[3], average_temp=float(row[1]),
                                    uncertainty=float(row[2]))
+
+
+def factors_affecting_ffmc1(file_name: str) -> None:
+    """ Finding out the trend of ffmc wrt temperature
+    """
+    list_of_data = process_forestfires(file_name)
+    list_of_temperature = [list_of_data[k].temperature for k in range(0, len(list_of_data))]
+    list_of_ffmc = [list_of_data[k].ffmc for k in range(0, len(list_of_data))]
+    df = pd.DataFrame(dict(temperature=list_of_temperature, FFMC=list_of_ffmc))
+    fig = px.scatter(df, x="temperature", y="FFMC", marginal_x="box", marginal_y="violin", trendline="ols")
+    fig.show()
+
+
+def factors_affecting_ffmc2(file_name: str) -> None:
+    """ Finding out the trend of ffmc wrt Relative humidity
+    """
+    list_of_data = process_forestfires(file_name)
+    list_of_moisture_data = [list_of_data[k].humidity for k in range(0, len(list_of_data))]
+    list_of_ffmc = [list_of_data[k].ffmc for k in range(0, len(list_of_data))]
+    df = pd.DataFrame(dict(Relative_humidity=list_of_moisture_data,
+                           FFMC=list_of_ffmc))
+    fig = px.scatter(df, x="Relative_humidity", y="FFMC", marginal_x="box", marginal_y="violin", trendline="ols")
+    fig.show()
+
+
+def factors_affecting_ffmc3(file_name: str) -> None:
+    """ Finding out the trend of ffmc wrt wind speed
+    """
+    list_of_data = process_forestfires(file_name)
+    list_of_wind = [list_of_data[k].wind for k in range(0, len(list_of_data))]
+    list_of_ffmc = [list_of_data[k].ffmc for k in range(0, len(list_of_data))]
+    df = pd.DataFrame(dict(wind=list_of_wind,  FFMC=list_of_ffmc))
+    fig = px.scatter(df, x="wind", y="FFMC", marginal_x="box", marginal_y="violin", trendline="ols")
+    fig.show()
+
+
+def factors_affecting_dmc1(file_name: str) -> None:
+    """ Finding out the trend of dmc wrt temperature
+    """
+    list_of_data = process_forestfires(file_name)
+    list_of_temperature = [list_of_data[k].temperature for k in range(0, len(list_of_data))]
+    list_of_dmc = [list_of_data[k].dmc for k in range(0, len(list_of_data))]
+    df = pd.DataFrame(dict(temperature=list_of_temperature, DDMC=list_of_dmc))
+    fig = px.scatter(df, x="temperature", y="DDMC", marginal_x="box", marginal_y="violin", trendline="ols")
+    fig.show()
+
+
+def factors_affecting_dmc2(file_name: str) -> None:
+    """ Finding out the trend of dmc wrt Relative Humidity
+    """
+    list_of_data = process_forestfires(file_name)
+    list_of_moisture_data = [list_of_data[k].humidity for k in range(0, len(list_of_data))]
+    list_of_dmc = [list_of_data[k].dmc for k in range(0, len(list_of_data))]
+    df = pd.DataFrame(dict(Relative_humidity=list_of_moisture_data, DDMC=list_of_dmc))
+    fig = px.scatter(df, x="Relative_humidity", y="DDMC", marginal_x="box", marginal_y="violin", trendline="ols")
+    fig.show()
+
+
+def factors_affecting_dmc3(file_name: str) -> None:
+    """ Finding out the trend of dmc wrt wind speed
+    """
+    list_of_data = process_forestfires(file_name)
+    list_of_wind = [list_of_data[k].wind for k in range(0, len(list_of_data))]
+    list_of_dmc = [list_of_data[k].dmc for k in range(0, len(list_of_data))]
+    df = pd.DataFrame(dict(wind=list_of_wind, DDMC=list_of_dmc))
+    fig = px.scatter(df, x="wind", y="DDMC", marginal_x="box", marginal_y="violin", trendline="ols")
+    fig.show()
+
+
+def factors_affecting_dc1(file_name: str) -> None:
+    """ Finding out the trend of dc wrt temperature
+    """
+    list_of_data = process_forestfires(file_name)
+    list_of_temperature = [list_of_data[k].temperature for k in range(0, len(list_of_data))]
+    list_of_dc = [list_of_data[k].dc for k in range(0, len(list_of_data))]
+    df = pd.DataFrame(dict(temperature=list_of_temperature, DC=list_of_dc))
+    fig = px.scatter(df, x="temperature", y="DC", marginal_x="box", marginal_y="violin", trendline="ols")
+    fig.show()
+
+
+def factors_affecting_dc2(file_name: str) -> None:
+    """ Finding out the trend of dc wrt Relative Humidity
+    """
+    list_of_data = process_forestfires(file_name)
+    list_of_moisture_data = [list_of_data[k].humidity for k in range(0, len(list_of_data))]
+    list_of_dc = [list_of_data[k].dc for k in range(0, len(list_of_data))]
+    df = pd.DataFrame(dict(Relative_humidity=list_of_moisture_data, DC=list_of_dc))
+    fig = px.scatter(df, x="Relative_humidity", y="DC", marginal_x="box", marginal_y="violin", trendline="ols")
+    fig.show()
+
+
+def factors_affecting_dc3(file_name: str) -> None:
+    """ Finding out the trend of dc wrt wind speed
+    """
+    list_of_data = process_forestfires(file_name)
+    list_of_wind = [list_of_data[k].wind for k in range(0, len(list_of_data))]
+    list_of_dc = [list_of_data[k].dc for k in range(0, len(list_of_data))]
+    df = pd.DataFrame(dict(wind=list_of_wind,  DC=list_of_dc))
+    fig = px.scatter(df, x="wind", y="DC", marginal_x="box", marginal_y="violin", trendline="ols")
+    fig.show()
+
+
+def factors_affecting_isi1(file_name: str) -> None:
+    """ Finding out the trend of isi wrt ffmc
+    """
+    list_of_data = process_forestfires(file_name)
+    list_of_isi = [list_of_data[k].isi for k in range(0, len(list_of_data))]
+    list_of_ffmc = [list_of_data[k].ffmc for k in range(0, len(list_of_data))]
+    df = pd.DataFrame(dict(ISI=list_of_isi, FFMC=list_of_ffmc))
+    fig = px.scatter(df, x="FFMC", y="ISI", marginal_x="box", marginal_y="violin", trendline="ols")
+    fig.show()
+
+
+def factors_affecting_isi2(file_name: str) -> None:
+    """ Finding out the trend of isi wrt dmc
+    """
+    list_of_data = process_forestfires(file_name)
+    list_of_isi = [list_of_data[k].isi for k in range(0, len(list_of_data))]
+    list_of_dmc = [list_of_data[k].dmc for k in range(0, len(list_of_data))]
+    df = pd.DataFrame(dict(ISI=list_of_isi, DMC=list_of_dmc))
+    fig = px.scatter(df, x="DMC", y="ISI", marginal_x="box", marginal_y="violin", trendline="ols")
+    fig.show()
+
+
+def factors_affecting_isi3(file_name: str) -> None:
+    """ Finding out the trend of isi wrt dc
+    """
+    list_of_data = process_forestfires(file_name)
+    list_of_isi = [list_of_data[k].isi for k in range(0, len(list_of_data))]
+    list_of_dc = [list_of_data[k].dc for k in range(0, len(list_of_data))]
+    df = pd.DataFrame(dict(ISI=list_of_isi, DC=list_of_dc))
+    fig = px.scatter(df, x="DC", y="ISI", marginal_x="box", marginal_y="violin", trendline="ols")
+    fig.show()
+
+
+def factors_linked_temp(file_name: str) -> None:
+    """ Finding out the trend of temperature wrt wind, Relative Humidity
+    """
+    list_of_data = process_forestfires(file_name)
+    list_of_moisture_data = [list_of_data[k].humidity for k in range(0, len(list_of_data))]
+    list_of_temperature = [list_of_data[k].temperature for k in range(0, len(list_of_data))]
+    list_of_wind = [list_of_data[k].wind for k in range(0, len(list_of_data))]
+    df = pd.DataFrame(dict(Relative_humidity=list_of_moisture_data,
+                           wind=list_of_wind, temperature=list_of_temperature))
+    fig = px.scatter(df, x="temperature", y=["wind", "Relative_humidity"], trendline="ols")
+    fig.show()
 
 
 def main() -> None:
