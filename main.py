@@ -5,6 +5,7 @@ from datetime import datetime
 from typing import List
 import plotly.express as px
 import pandas as pd
+# import statsmodels
 
 
 months_dict = {'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6,
@@ -113,7 +114,7 @@ def process_temperatures(file_path: str, city: str) -> List[PortugalTemperatureD
 
         data_so_far = []  # ACCUMULATOR: update list of data
         for row in reader:
-            if city in row:
+            if city in row and row[1] != '':
                 # process each row and add to data_so_far
                 data_so_far.append(row_to_temperature_data(row))
 
