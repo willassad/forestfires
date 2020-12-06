@@ -131,6 +131,20 @@ def row_to_temperature_data(row: List[str]) -> PortugalTemperatureData:
                                    uncertainty=float(row[2]))
 
 
+#TODO: Code this
+def dc_versus_year(file_name: str) -> None:
+    """ Look at the relationship between dc and year.
+    Trying to find a trend for how the dc will change as temperatures
+    continue to rise each year.
+
+    For each year in portugaltemperatures.csv in the city Braga, take
+    the temperature and find the expected DC value from that temperature
+    from the data in forestfires.csv
+
+    Graph the results.
+    """
+
+
 def factors_affecting_ffmc1(file_name: str) -> None:
     """ Finding out the trend of ffmc wrt temperature
     """
