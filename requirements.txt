@@ -1,0 +1,9 @@
+# CSC110 Final Project: Python libraries we're using for the project.
+
+# Testing and code checking
+hypothesis
+pytest
+python-ta
+
+# Graphics and data visualization
+plotly
