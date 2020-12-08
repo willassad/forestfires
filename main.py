@@ -5,7 +5,7 @@ from datetime import datetime
 from typing import List
 import plotly.express as px
 import pandas as pd
-# import statsmodels
+import statsmodels.api as sm
 
 
 months_dict = {'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6,
@@ -98,6 +98,26 @@ def row_to_forest_data(row: List[str]) -> ForestFireData:
                           rain=float(row[11]), area=float(row[12]))
 
 
+def process_fires_col(filepath: str) -> Dict[str, List]:
+    """ Convert the row forest fire data into dictionary of columns of each factor.
+    """
+    row_data = process_forestfires(filepath)
+    dict_so_far = {'ffmc': [], 'dmc': [], 'dc': [], 'isi': [], 'temperature': [], 'humidity': [],
+                   'wind': [], 'rain': [], 'area': []}
+    for i in range(len(row_data)):
+        dict_so_far['ffmc'].append(row_data[i].ffmc)
+        dict_so_far['dmc'].append(row_data[i].dmc)
+        dict_so_far['dc'].append(row_data[i].dc)
+        dict_so_far['isi'].append(row_data[i].isi)
+        dict_so_far['temperature'].append(row_data[i].temperature)
+        dict_so_far['humidity'].append(row_data[i].humidity)
+        dict_so_far['wind'].append(row_data[i].wind)
+        dict_so_far['rain'].append(row_data[i].rain)
+        dict_so_far['area'].append(row_data[i].area)
+
+    return dict_so_far
+
+
 @dataclass
 class PortugalTemperatureData:
     """Docstring """
@@ -131,7 +151,7 @@ def row_to_temperature_data(row: List[str]) -> PortugalTemperatureData:
                                    uncertainty=float(row[2]))
 
 
-#TODO: Code this
+# TODO: Code this
 def dc_versus_year(file_name: str) -> None:
     """ Look at the relationship between dc and year.
     Trying to find a trend for how the dc will change as temperatures
@@ -289,6 +309,42 @@ def factors_linked_temp(file_name: str) -> None:
                            wind=list_of_wind, temperature=list_of_temperature))
     fig = px.scatter(df, x="temperature", y=["wind", "Relative_humidity"], trendline="ols")
     fig.show()
+
+
+def calc_double_regression(y_0: float, b_1: float, b_2: float, x1: float, x2: float) -> float:
+    """ Calculate the value of dependent variable y using equaltion of double regression.
+
+    :param y_0: constant y-intercept
+    :param b_1: coefficient of first independent variable
+    :param b_2: coefficient of second independent variable
+    :param x1: value of the first independent variable
+    :param x2: value of the second independent variable
+    :return: the value of the dependent variable y. 
+    """
+    y = y_0 + b_1 * x1 + b_2 * x2
+
+    return y
+
+
+def model_coef_double_regression(file_name: str, indep_var1: str, indep_var2: str, dep_var: str) -> None:
+    """ given 2 independent variable name and 1 dependent variable name, use statsmodel.OLS to model the
+    change of dependent variable due to changes of independent variables.
+
+    :param file_name: datafile we are using, the forestfire.csv file
+    :param indep_var1: the first independent variable
+    :param indep_var2: the second independent variable
+    :param dep_var: the dependent variable
+    :return: none
+    """
+    data_col = process_fires_col(file_name)
+    df = pd.DataFrame(data_col, columns=['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
+                                         'wind', 'rain', 'area'])
+    x = df[[indep_var1, indep_var2]]
+    y = df[dep_var]
+    x = sm.add_constant(x)
+
+    model = sm.OLS(y, x).fit()
+    print(model.summary())
 
 
 def main() -> None:
