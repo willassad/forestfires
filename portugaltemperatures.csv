@@ -1,3 +1,4 @@
+date,temperatures,error,city,counrty,lattitude,longitude
 1753-01-01,7.106,5.358,Amadora,Portugal,39.38N,8.32W
 1753-02-01,9.266,2.695,Amadora,Portugal,39.38N,8.32W
 1753-03-01,13.495999999999999,3.068,Amadora,Portugal,39.38N,8.32W
