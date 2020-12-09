@@ -347,6 +347,25 @@ def model_coef_double_regression(file_name: str, indep_var1: str, indep_var2: st
     print(model.summary())
 
 
+def animation(file_name: str) -> None:
+    """" Animation to show the increase of temp over time
+     """
+    list_of_data = pd.read_csv(file_name)
+    list_of_city = list_of_data['city']
+    list_of_temperatures = list_of_data['temperatures']
+    date = list_of_data['date']
+    fig = px.bar(
+        list_of_data,
+        x=list_of_city,
+        y=list_of_temperatures,
+        color=list_of_city,
+        animation_frame=date,
+        animation_group=list_of_city,
+        range_y=[0, 50]
+    )
+    fig.show()
+
+
 def main() -> None:
     """ Main """
     pass
