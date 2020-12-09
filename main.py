@@ -6,6 +6,7 @@ from typing import List
 import plotly.express as px
 import pandas as pd
 import statsmodels.api as sm
+from typing import Dict
 
 
 months_dict = {'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6,
@@ -163,6 +164,9 @@ def dc_versus_year(file_name: str) -> None:
 
     Graph the results.
     """
+
+def predict_temperatures() -> None:
+    pass
 
 
 def factors_affecting_ffmc1(file_name: str) -> None:
