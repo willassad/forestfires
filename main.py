@@ -2,10 +2,11 @@
 import csv
 from dataclasses import dataclass
 from datetime import datetime
-from typing import List
+from typing import List, Dict
 import plotly.express as px
 import pandas as pd
 import statsmodels.api as sm
+import bar_chart_race as bcr
 
 
 months_dict = {'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6,
@@ -349,20 +350,10 @@ def model_coef_double_regression(file_name: str, indep_var1: str, indep_var2: st
 
 def animation(file_name: str) -> None:
     """" Animation to show the increase of temp over time
-     """
-    list_of_data = pd.read_csv(file_name)
-    list_of_city = list_of_data['city']
-    list_of_temperatures = list_of_data['temperatures']
-    date = list_of_data['date']
-    fig = px.bar(
-        list_of_data,
-        x=list_of_city,
-        y=list_of_temperatures,
-        color=list_of_city,
-        animation_frame=date,
-        animation_group=list_of_city,
-        range_y=[0, 50]
-    )
+    """
+    df = pd.read_csv(file_name)
+    fig = px.bar(df, x="Source", y="Mean",
+                 animation_frame="Year", animation_group="Source", range_y=[-1, 1])
     fig.show()
 
 
