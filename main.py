@@ -2,12 +2,11 @@
 import csv
 from dataclasses import dataclass
 from datetime import datetime
-from typing import List, Dict, Tuple
+from typing import List
 import plotly.express as px
 import pandas as pd
 import statsmodels.api as sm
 from typing import Dict
-import bar_chart_race as bcr
 
 
 months_dict = {'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6,
@@ -165,10 +164,14 @@ def dc_versus_year(file_name: str) -> None:
 
     Graph the results.
     """
+    temperatures_dc = factors_affecting_dc1('forestfires.csv')
     temperatures_data = process_temperatures(file_name, 'Braga')
+
     for data_row in temperatures_data:
         temperature = data_row.average_temp
-        print(data_row.timestamp, temperature)
+        timestamp = data_row.timestamp
+        predicted_dc = temperatures_dc[0] + temperatures_dc[1] * temperature
+        print(timestamp, temperature, predicted_dc)
 
 
 def predict_temperatures(year: int) -> None:
