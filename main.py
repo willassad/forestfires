@@ -2,7 +2,7 @@
 import csv
 from dataclasses import dataclass
 from datetime import datetime
-from typing import List, Dict
+from typing import List, Dict, Tuple
 import plotly.express as px
 import pandas as pd
 import statsmodels.api as sm
@@ -165,8 +165,13 @@ def dc_versus_year(file_name: str) -> None:
 
     Graph the results.
     """
+    temperatures_data = process_temperatures(file_name, 'Braga')
+    for data_row in temperatures_data:
+        temperature = data_row.average_temp
+        print(data_row.timestamp, temperature)
 
-def predict_temperatures() -> None:
+
+def predict_temperatures(year: int) -> None:
     pass
 
 
@@ -237,8 +242,9 @@ def factors_affecting_dmc3(file_name: str) -> None:
     fig.show()
 
 
-def factors_affecting_dc1(file_name: str) -> None:
+def factors_affecting_dc1(file_name: str) -> List[float]:
     """ Finding out the trend of dc wrt temperature
+    Return a list containing the constant, followed by coefficient of trendline
     """
     list_of_data = process_forestfires(file_name)
     list_of_temperature = [list_of_data[k].temperature for k in range(0, len(list_of_data))]
@@ -246,6 +252,9 @@ def factors_affecting_dc1(file_name: str) -> None:
     df = pd.DataFrame(dict(temperature=list_of_temperature, DC=list_of_dc))
     fig = px.scatter(df, x="temperature", y="DC", marginal_x="box", marginal_y="violin", trendline="ols")
     fig.show()
+
+    results = px.get_trendline_results(fig)
+    return results.iloc[0]["px_fit_results"].params
 
 
 def factors_affecting_dc2(file_name: str) -> None:
