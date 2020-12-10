@@ -349,6 +349,7 @@ def model_coef_double_regression(file_name: str, indep_var1: str, indep_var2: st
     x = sm.add_constant(x)
 
     model = sm.OLS(y, x).fit()
+
     print(model.summary())
 
 

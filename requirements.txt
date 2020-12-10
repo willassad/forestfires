@@ -6,7 +6,15 @@ pytest
 python-ta
 
 # Graphics and data visualization
+<<<<<<< Updated upstream
 plotly~=4.13.0
 
 pandas~=1.1.4
 statsmodels~=0.12.1
+=======
+plotly
+
+# Computations
+pandas
+statsmodels
+>>>>>>> Stashed changes
