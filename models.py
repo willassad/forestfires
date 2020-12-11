@@ -1,8 +1,13 @@
-from typing import List
+import math
+import statistics
+from typing import Dict, List
 import plotly.express as px
 import pandas as pd
 import statsmodels.api as sm
 from entities import process_temperatures, process_forestfires, process_fires_col
+
+import plotly.io as pio
+pio.renderers.default = "browser"
 
 
 class Model:
@@ -27,18 +32,46 @@ class Model:
         Graph the results.
         """
         temperatures_dc = self.factors_affecting_dc1()
+        average_temps = self.get_average_temperatures()
+
+        list_of_times = []  # ACCUMULATOR
+        list_of_dc = []  # ACCUMULATOR
+
+        for year in average_temps:
+            predicted_dc = temperatures_dc[0] + temperatures_dc[1] * average_temps[year]
+            list_of_times.append(year)
+            list_of_dc.append(predicted_dc)
+            print(year, predicted_dc)
+
+        df = pd.DataFrame(dict(Time=list_of_times, DC=list_of_dc))
+        fig = px.scatter(df, x="Time", y="DC", marginal_x="box", marginal_y="violin", trendline="ols")
+        fig.show()
+
+    def get_average_temperatures(self) -> Dict[int, float]:
+        """Return a dictionary of the year corresponding to the average temperature """
         temperatures_data = process_temperatures(self.TEMPERATURES_FILE, self.CITY)
+        yearly_temperatures = {}
 
-        for data_row in temperatures_data:
-            temperature = data_row.average_temp
-            timestamp = data_row.timestamp
-            predicted_dc = temperatures_dc[0] + temperatures_dc[1] * temperature
-            print(timestamp, temperature, predicted_dc)
+        for row in temperatures_data:
+            year = row.timestamp.year
+            temperature = row.average_temp
 
+            if year in yearly_temperatures:
+                yearly_temperatures[year].append(temperature)
+            else:
+                yearly_temperatures[year] = []
+
+        return {key: sum(yearly_temperatures[key]) / len(yearly_temperatures[key])
+                for key in yearly_temperatures if len(yearly_temperatures[key]) > 0}
 
     def predict_temperature(self, year) -> None:
         """ Predict future temperature in the given year """
-        pass
+        temperature_data = self.get_average_temperatures()
+        df = pd.DataFrame(dict(time=list(temperature_data.keys()), temperature=temperature_data.values()))
+        fig = px.scatter(df, x="time", y="temperature", marginal_x="box", marginal_y="violin", trendline="ols")
+        fig.show()
+        results = px.get_trendline_results(fig)
+        return results.iloc[0]["px_fit_results"].params
 
     def factors_affecting_ffmc1(self) -> None:
         """ Finding out the trend of ffmc wrt temperature
@@ -48,7 +81,7 @@ class Model:
         list_of_ffmc = [list_of_data[k].ffmc for k in range(0, len(list_of_data))]
         df = pd.DataFrame(dict(temperature=list_of_temperature, FFMC=list_of_ffmc))
         fig = px.scatter(df, x="temperature", y="FFMC", marginal_x="box", marginal_y="violin", trendline="ols")
-        fig.show()
+        pio.show(fig)
 
     def factors_affecting_ffmc2(self) -> None:
         """ Finding out the trend of ffmc wrt Relative humidity
@@ -110,7 +143,7 @@ class Model:
         list_of_dc = [list_of_data[k].dc for k in range(0, len(list_of_data))]
         df = pd.DataFrame(dict(temperature=list_of_temperature, DC=list_of_dc))
         fig = px.scatter(df, x="temperature", y="DC", marginal_x="box", marginal_y="violin", trendline="ols")
-        fig.show()
+        # fig.show()
 
         results = px.get_trendline_results(fig)
         return results.iloc[0]["px_fit_results"].params
