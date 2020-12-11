@@ -218,17 +218,36 @@ class Model:
         fig.show()
 
 
-def calc_double_regression(y_0: float, b_1: float, b_2: float, x1: float, x2: float) -> float:
-    """ Calculate the value of dependent variable y using equaltion of double regression.
-
-    :param y_0: constant y-intercept
-    :param b_1: coefficient of first independent variable
-    :param b_2: coefficient of second independent variable
-    :param x1: value of the first independent variable
-    :param x2: value of the second independent variable
-    :return: the value of the dependent variable y.
+def plot_double_regression(file_name: str, indep_var1: str, indep_var2: str, dep_var: str) -> None:
+    """ Plot the scatter plot of dependent variable in a 3d graph with the 2 independent variables.
     """
-    y = y_0 + b_1 * x1 + b_2 * x2
+    data_col = process_fires_col(file_name)
+    df = pd.DataFrame(data_col, columns=['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
+                                         'wind', 'rain', 'area'])
+    fig = px.scatter_3d(df[[indep_var1, indep_var2, dep_var]], x=indep_var1, y=indep_var2, z=dep_var, opacity=0.6)
+    fig.show()
+
+
+def plot_prediction_vs_outcome(file_name: str, dep_var: str, prediction: List[float]) -> None:
+    """ Plot the prediction calculated from regression vs the actual data from dataset
+    """
+    data_col = process_fires_col(file_name)
+    df = pd.DataFrame(data_col, columns=['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
+                                         'wind', 'rain', 'area'])
+    df['prediction'] = prediction
+    fig = px.scatter(df[[dep_var, 'prediction']], x=dep_var, y='prediction')
+    fig.show()
+
+
+def calc_double_regression(file_name: str, y_0: float, b_1: float, b_2: float, x1: str, x2: str) -> List[float]:
+    """ Calculate the value of dependent variable y using equaltion of double regression.
+    """
+    data_col = process_fires_col(file_name)
+    x1_list = data_col[x1]
+    x2_list = data_col[x2]
+    y = []
+    for i in range(len(x1_list)):
+        y.append(y_0 + b_1 * x1_list[i] + b_2 * x2_list[i])
 
     return y
 
@@ -256,6 +275,7 @@ def model_coef_double_regression(file_name: str, indep_var1: str, indep_var2: st
 
 
 model = Model('forestfires.csv', 'portugaltemperatures.csv', 'annual_csv.txt', 'Braga')
+
 
 def main() -> None:
     """ Main """
