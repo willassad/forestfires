@@ -1,12 +1,10 @@
-import math
-import statistics
 from typing import Dict, List
 import plotly.express as px
 import pandas as pd
 import statsmodels.api as sm
 from entities import process_temperatures, process_forestfires, process_fires_col
-
 import plotly.io as pio
+
 pio.renderers.default = "browser"
 
 
@@ -69,9 +67,10 @@ class Model:
         temperature_data = self.get_average_temperatures()
         df = pd.DataFrame(dict(time=list(temperature_data.keys()), temperature=temperature_data.values()))
         fig = px.scatter(df, x="time", y="temperature", marginal_x="box", marginal_y="violin", trendline="ols")
-        fig.show()
+
         results = px.get_trendline_results(fig)
-        return results.iloc[0]["px_fit_results"].params
+        parameters = results.iloc[0]['px_fit_results'].params
+        return parameters[0] + parameters[1] * year
 
     def factors_affecting_ffmc1(self) -> None:
         """ Finding out the trend of ffmc wrt temperature
@@ -219,7 +218,6 @@ class Model:
         fig.show()
 
 
-
 def calc_double_regression(y_0: float, b_1: float, b_2: float, x1: float, x2: float) -> float:
     """ Calculate the value of dependent variable y using equaltion of double regression.
 
@@ -248,7 +246,7 @@ def model_coef_double_regression(file_name: str, indep_var1: str, indep_var2: st
 
     data_col = process_fires_col(file_name)
     df = pd.DataFrame(data_col, columns=['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
-                                             'wind', 'rain', 'area'])
+                                         'wind', 'rain', 'area'])
     x = df[[indep_var1, indep_var2]]
     y = df[dep_var]
     x = sm.add_constant(x)
@@ -258,7 +256,6 @@ def model_coef_double_regression(file_name: str, indep_var1: str, indep_var2: st
 
 
 model = Model('forestfires.csv', 'portugaltemperatures.csv', 'annual_csv.txt', 'Braga')
-
 
 def main() -> None:
     """ Main """
