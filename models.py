@@ -2,7 +2,7 @@ from typing import Dict, List, Tuple
 import plotly.express as px
 import pandas as pd
 import statsmodels.api as sm
-from entities import process_temperatures, process_forestfires, process_fires_col
+from entities import process_temperatures, process_forestfires
 import plotly.io as pio
 
 pio.renderers.default = "browser"
@@ -72,8 +72,8 @@ class Model:
 
     def trendline(self, x_axis: str, y_axis: str) -> List[float]:
         """Function to give a general trend of the input values"""
-        list_of_data = process_fires_col(self.FIRES_FILE)
-        df = pd.DataFrame({x_axis: list_of_data[x_axis], y_axis: list_of_data[y_axis]})
+        data = process_forestfires(self.FIRES_FILE)
+        df = pd.DataFrame({x_axis: data[x_axis], y_axis: data[y_axis]})
         fig = px.scatter(df, x=x_axis, y=y_axis, marginal_x="box", marginal_y="violin", trendline="ols")
         fig.show()
 
@@ -119,7 +119,6 @@ def plot_variables(indep_var1: str, indep_var2: str, dep_var: str) -> None:
         - indep_var1: the name of the first independent variable for the double regression
         - indep_var2: the name of the second independent variable for the double regression
         - dep_var: the name of the dependent variable  for the double regression
-
     Preconditions:
         - indep_var1 in ['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
                    'wind', 'rain', 'area']
@@ -128,7 +127,7 @@ def plot_variables(indep_var1: str, indep_var2: str, dep_var: str) -> None:
         - dep_var in ['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
                    'wind', 'rain', 'area']
     """
-    data_col = process_fires_col('forestfires.csv')  # put the data from datafile into list of columns of each factor.
+    data_col = process_forestfires('forestfires.csv')  # put the data from datafile into list of columns of each factor.
     df = pd.DataFrame(data_col, columns=['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
                                          'wind', 'rain', 'area'])  # generate dataframe of the columns of factors
     fig = px.scatter_3d(df[[indep_var1, indep_var2, dep_var]], x=indep_var1, y=indep_var2, z=dep_var, opacity=0.6)
@@ -147,7 +146,7 @@ def plot_prediction_vs_outcome(dep_var: str, prediction: List[float]) -> None:
                    'wind', 'rain', 'area']
         - len(prediction) == len(process_forestfires('forestfires.csv'))
     """
-    data_col = process_fires_col('forestfires.csv')  # put the data into columns of each factor.
+    data_col = process_forestfiresl('forestfires.csv')  # put the data into columns of each factor.
     df = pd.DataFrame(data_col, columns=['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
                                          'wind', 'rain', 'area'])  # generate dataframe of the columns of factors
     df['prediction'] = prediction  # add the column of predictions, since it is not in data_col
@@ -171,7 +170,7 @@ def calc_double_regression(y_0: float, b_1: float, b_2: float, x1: str, x2: str)
                    'wind', 'rain', 'area']
         - len(process_fires_col('forestfires.csv')[x1]) == len(process_fires_col('forestfires.csv')[x2])
     """
-    data_col = process_fires_col('forestfires.csv')  # get the data into dict of columns of each factor
+    data_col = process_forestfires('forestfires.csv')  # get the data into dict of columns of each factor
     x1_list = data_col[x1]  # get the column corresponding to x1
     x2_list = data_col[x2]  # get the column corresponding to x2
     y = []  # an empty list for the results of regression
@@ -198,11 +197,10 @@ def model_coef_double_regression(indep_var1: str, indep_var2: str, dep_var: str)
                    'wind', 'rain', 'area']
         - dep_var in ['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
                    'wind', 'rain', 'area']
-
     >>> model_coef_double_regression('forestfires.csv', 'ffmc', 'dc', 'temperature')
     (-14.839067312278363, 0.31592664888750815, 0.009291464340286205)
     """
-    data_col = process_fires_col('forestfires.csv')  # put data into dict of columns of each factor
+    data_col = process_forestfires('forestfires.csv')  # put data into dict of columns of each factor
     df = pd.DataFrame(data_col, columns=['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
                                          'wind', 'rain', 'area'])  # generate dataframe from data_col
     x = df[[indep_var1, indep_var2]]  # x is the dataframe with only columns of the 2 independent variables
