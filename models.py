@@ -31,7 +31,7 @@ class Model:
 
         Graph the results.
         """
-        temperatures_dc = self.trendline('temperature', 'dc')
+        temperatures_dc = self.trendline('temperature', 'dc', False)
         average_temps = self.get_average_temperatures()
 
         list_of_times = []  # ACCUMULATOR
@@ -72,12 +72,14 @@ class Model:
         parameters = results.iloc[0]['px_fit_results'].params
         return parameters[0] + parameters[1] * year
 
-    def trendline(self, x_axis: str, y_axis: str) -> List[float]:
+    def trendline(self, x_axis: str, y_axis: str, display=True) -> List[float]:
         """Function to give a general trend of the input values"""
         data = process_forestfires(self.FIRES_FILE)
         df = pd.DataFrame({x_axis: data[x_axis], y_axis: data[y_axis]})
         fig = px.scatter(df, x=x_axis, y=y_axis, marginal_x="box", marginal_y="violin", trendline="ols")
-        fig.show()
+
+        if display:
+            fig.show()
 
         results = px.get_trendline_results(fig)
         return results.iloc[0]["px_fit_results"].params
@@ -254,4 +256,4 @@ def model_coef_double_regression(indep_var1: str, indep_var2: str, dep_var: str)
     return (dict_model['const'], dict_model[indep_var1], dict_model[indep_var2])
 
 
-model = Model('data/forestfires.csv', 'data/portugaltemperatures.csv', 'data/annual_csv.txt', 'Braga')
+# model = Model('data/forestfires.csv', 'data/portugaltemperatures.csv', 'data/annual_csv.txt', 'Braga')
