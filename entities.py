@@ -108,6 +108,12 @@ def process_temperatures(file_path: str, city: str) -> List[PortugalTemperatureD
 
 def row_to_temperature_data(row: List[str]) -> PortugalTemperatureData:
     """ Convert a row of forestfires.csv into PortugalTemperatureData
+
+    >>> example_row = ['1753-01-01', '7.106', '5.358', 'Amadora', 'Portugal', '39.38N', '8.32W']
+    >>> result = row_to_temperature_data(example_row)
+    >>> result == PortugalTemperatureData(timestamp=datetime.datetime(1753, 1, 1, 0, 0),\
+                  city='Amadora', average_temp=7.106, uncertainty=5.358)
+    True
     """
     time_data = [int(x) for x in row[0].split('-')]
 
