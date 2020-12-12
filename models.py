@@ -1,3 +1,5 @@
+"""Models """
+
 from typing import Dict, List, Tuple
 import plotly.express as px
 import pandas as pd
