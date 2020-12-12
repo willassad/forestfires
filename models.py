@@ -255,12 +255,3 @@ def model_coef_double_regression(indep_var1: str, indep_var2: str, dep_var: str)
 
 
 model = Model('data/forestfires.csv', 'data/portugaltemperatures.csv', 'data/annual_csv.txt', 'Braga')
-
-
-def main() -> None:
-    """ Main """
-    pass
-
-
-if __name__ == '__main__':
-    main()
