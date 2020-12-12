@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Tuple
 import plotly.express as px
 import pandas as pd
 import statsmodels.api as sm
@@ -29,7 +29,7 @@ class Model:
 
         Graph the results.
         """
-        temperatures_dc = self.factors_affecting_dc1()
+        temperatures_dc = self.trendline('temperature', 'dc')
         average_temps = self.get_average_temperatures()
 
         list_of_times = []  # ACCUMULATOR
@@ -41,9 +41,7 @@ class Model:
             list_of_dc.append(predicted_dc)
             print(year, predicted_dc)
 
-        df = pd.DataFrame(dict(Time=list_of_times, DC=list_of_dc))
-        fig = px.scatter(df, x="Time", y="DC", marginal_x="box", marginal_y="violin", trendline="ols")
-        fig.show()
+        self.trendline_axis_known(('time', list_of_times), ('dc', list_of_dc))
 
     def get_average_temperatures(self) -> Dict[int, float]:
         """Return a dictionary of the year corresponding to the average temperature """
@@ -72,25 +70,25 @@ class Model:
         parameters = results.iloc[0]['px_fit_results'].params
         return parameters[0] + parameters[1] * year
 
-    def get_dataframe(self) -> Dict:
-        """Get a dictionary of data from file"""
-        list_of_data = process_forestfires(self.FIRES_FILE)
-        list_of_isi = [list_of_data[k].isi for k in range(0, len(list_of_data))]
-        list_of_dc = [list_of_data[k].dc for k in range(0, len(list_of_data))]
-        list_of_dmc = [list_of_data[k].dmc for k in range(0, len(list_of_data))]
-        list_of_ffmc = [list_of_data[k].ffmc for k in range(0, len(list_of_data))]
-        list_of_rh = [list_of_data[k].humidity for k in range(0, len(list_of_data))]
-        list_of_temp = [list_of_data[k].temperature for k in range(0, len(list_of_data))]
-        list_of_wind = [list_of_data[k].wind for k in range(0, len(list_of_data))]
-        return {"Temperature": list_of_temp, "Relative_humidity": list_of_rh, "Wind": list_of_wind,
-                "FFMC": list_of_ffmc, "DMC": list_of_dmc, "DC": list_of_dc, "ISI": list_of_isi}
-
-    def trendline(self, y_axis: str, x_axis: str) -> None:
+    def trendline(self, x_axis: str, y_axis: str) -> List[float]:
         """Function to give a general trend of the input values"""
-        list_of_data = self.get_dataframe()
-        df = pd.DataFrame(dict(y=list_of_data[y_axis], x=list_of_data[x_axis]))
-        fig = px.scatter(df, x="x", y="y", marginal_x="box", marginal_y="violin", trendline="ols")
+        list_of_data = process_fires_col(self.FIRES_FILE)
+        df = pd.DataFrame({x_axis: list_of_data[x_axis], y_axis: list_of_data[y_axis]})
+        fig = px.scatter(df, x=x_axis, y=y_axis, marginal_x="box", marginal_y="violin", trendline="ols")
         fig.show()
+
+        results = px.get_trendline_results(fig)
+        return results.iloc[0]["px_fit_results"].params
+
+    def trendline_axis_known(self, x_axis: Tuple[str, List[float]],
+                             y_axis: Tuple[str, List[float]]) -> List[float]:
+        """Function to give a general trend of the input values"""
+        df = pd.DataFrame({x_axis[0]: x_axis[1], y_axis[0]: y_axis[1]})
+        fig = px.scatter(df, x=x_axis[0], y=y_axis[0], marginal_x="box", marginal_y="violin", trendline="ols")
+        fig.show()
+
+        results = px.get_trendline_results(fig)
+        return results.iloc[0]["px_fit_results"].params
 
     def animate_temperatures(self) -> None:
         """" Animation to show the increase of temp over time

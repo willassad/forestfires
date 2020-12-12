@@ -10,7 +10,6 @@ months_dict = {'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6,
 days_dict = {'mon': 1, 'tue': 2, 'wed': 3, 'thu': 4, 'fri': 5, 'sat': 6, 'sun': 7}
 
 
-@dataclass
 class ForestFireData:
     """We describe a forest fire in the same format as forestfires.csv
        where each forest fire has a month, day, FFMC, DMC, DC, ISI,
@@ -48,16 +47,20 @@ class ForestFireData:
                                   rain=0, area=0)
     """
 
-    timestamp: datetime.date
-    ffmc: float
-    dmc: float
-    dc: float
-    isi: float
-    temperature: float
-    humidity: float
-    wind: float
-    rain: float
-    area: float
+    def __init__(self, timestamp: datetime.date, ffmc: float, dmc: float,
+                 dc: float, isi: float, temperature: float, humidity: float,
+                 wind: float, rain: float, area: float):
+
+        self.timestamp = timestamp
+        self.ffmc = ffmc
+        self.dmc = dmc
+        self.dc = dc
+        self.isi = isi
+        self.temperature = temperature
+        self.humidity = humidity
+        self.wind = wind
+        self.rain = rain
+        self.area = area
 
 
 def process_forestfires(file_path: str) -> List[ForestFireData]:
