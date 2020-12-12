@@ -95,7 +95,7 @@ class Model:
         return results.iloc[0]["px_fit_results"].params
 
     def animate_temperatures(self) -> None:
-        """" Animation to show the increase of temp over time
+        """" Animation to show the increase of temperature over time.
         """
         df = pd.read_csv(self.TEMPERATURES_FILE)
         fig = px.bar(df, x="Source", y="Mean",
@@ -103,7 +103,7 @@ class Model:
         fig.show()
 
     def animate_temperatures2(self) -> None:
-        """" Animation to show the increase of temp over time
+        """" Animation to show the increase of temperature over time.
         """
         data = self.get_average_temperatures()
         list_of_years = list(data.keys())
@@ -180,7 +180,7 @@ def plot_prediction_vs_outcome(dep_var: str, prediction: List[float]) -> None:
 
 
 def calc_double_regression(y_0: float, b_1: float, b_2: float, x1: str, x2: str) -> List[float]:
-    """ Calculate the value of dependent variable y using equaltion of double regression.
+    """ Calculate the value of dependent variable y using equation of double regression.
 
     Parameters:
         - y_0: the constant
