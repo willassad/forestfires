@@ -72,141 +72,24 @@ class Model:
         parameters = results.iloc[0]['px_fit_results'].params
         return parameters[0] + parameters[1] * year
 
-    def factors_affecting_ffmc1(self) -> None:
-        """ Finding out the trend of ffmc wrt temperature
-        """
-        list_of_data = process_forestfires(self.FIRES_FILE)
-        list_of_temperature = [list_of_data[k].temperature for k in range(0, len(list_of_data))]
-        list_of_ffmc = [list_of_data[k].ffmc for k in range(0, len(list_of_data))]
-        df = pd.DataFrame(dict(temperature=list_of_temperature, FFMC=list_of_ffmc))
-        fig = px.scatter(df, x="temperature", y="FFMC", marginal_x="box", marginal_y="violin", trendline="ols")
-        pio.show(fig)
-
-    def factors_affecting_ffmc2(self) -> None:
-        """ Finding out the trend of ffmc wrt Relative humidity
-        """
-        list_of_data = process_forestfires(self.FIRES_FILE)
-        list_of_moisture_data = [list_of_data[k].humidity for k in range(0, len(list_of_data))]
-        list_of_ffmc = [list_of_data[k].ffmc for k in range(0, len(list_of_data))]
-        df = pd.DataFrame(dict(Relative_humidity=list_of_moisture_data,
-                               FFMC=list_of_ffmc))
-        fig = px.scatter(df, x="Relative_humidity", y="FFMC", marginal_x="box", marginal_y="violin", trendline="ols")
-        fig.show()
-
-    def factors_affecting_ffmc3(self) -> None:
-        """ Finding out the trend of ffmc wrt wind speed
-        """
-        list_of_data = process_forestfires(self.FIRES_FILE)
-        list_of_wind = [list_of_data[k].wind for k in range(0, len(list_of_data))]
-        list_of_ffmc = [list_of_data[k].ffmc for k in range(0, len(list_of_data))]
-        df = pd.DataFrame(dict(wind=list_of_wind, FFMC=list_of_ffmc))
-        fig = px.scatter(df, x="wind", y="FFMC", marginal_x="box", marginal_y="violin", trendline="ols")
-        fig.show()
-
-    def factors_affecting_dmc1(self) -> None:
-        """ Finding out the trend of dmc wrt temperature
-        """
-        list_of_data = process_forestfires(self.FIRES_FILE)
-        list_of_temperature = [list_of_data[k].temperature for k in range(0, len(list_of_data))]
-        list_of_dmc = [list_of_data[k].dmc for k in range(0, len(list_of_data))]
-        df = pd.DataFrame(dict(temperature=list_of_temperature, DDMC=list_of_dmc))
-        fig = px.scatter(df, x="temperature", y="DDMC", marginal_x="box", marginal_y="violin", trendline="ols")
-        fig.show()
-
-    def factors_affecting_dmc2(self) -> None:
-        """ Finding out the trend of dmc wrt Relative Humidity
-        """
-        list_of_data = process_forestfires(self.FIRES_FILE)
-        list_of_moisture_data = [list_of_data[k].humidity for k in range(0, len(list_of_data))]
-        list_of_dmc = [list_of_data[k].dmc for k in range(0, len(list_of_data))]
-        df = pd.DataFrame(dict(Relative_humidity=list_of_moisture_data, DDMC=list_of_dmc))
-        fig = px.scatter(df, x="Relative_humidity", y="DDMC", marginal_x="box", marginal_y="violin", trendline="ols")
-        fig.show()
-
-    def factors_affecting_dmc3(self) -> None:
-        """ Finding out the trend of dmc wrt wind speed
-        """
-        list_of_data = process_forestfires(self.FIRES_FILE)
-        list_of_wind = [list_of_data[k].wind for k in range(0, len(list_of_data))]
-        list_of_dmc = [list_of_data[k].dmc for k in range(0, len(list_of_data))]
-        df = pd.DataFrame(dict(wind=list_of_wind, DDMC=list_of_dmc))
-        fig = px.scatter(df, x="wind", y="DDMC", marginal_x="box", marginal_y="violin", trendline="ols")
-        fig.show()
-
-    def factors_affecting_dc1(self) -> List[float]:
-        """ Finding out the trend of dc wrt temperature
-        Return a list containing the constant, followed by coefficient of trendline
-        """
-        list_of_data = process_forestfires(self.FIRES_FILE)
-        list_of_temperature = [list_of_data[k].temperature for k in range(0, len(list_of_data))]
-        list_of_dc = [list_of_data[k].dc for k in range(0, len(list_of_data))]
-        df = pd.DataFrame(dict(temperature=list_of_temperature, DC=list_of_dc))
-        fig = px.scatter(df, x="temperature", y="DC", marginal_x="box", marginal_y="violin", trendline="ols")
-        # fig.show()
-
-        results = px.get_trendline_results(fig)
-        return results.iloc[0]["px_fit_results"].params
-
-    def factors_affecting_dc2(self) -> None:
-        """ Finding out the trend of dc wrt Relative Humidity
-        """
-        list_of_data = process_forestfires(self.FIRES_FILE)
-        list_of_moisture_data = [list_of_data[k].humidity for k in range(0, len(list_of_data))]
-        list_of_dc = [list_of_data[k].dc for k in range(0, len(list_of_data))]
-        df = pd.DataFrame(dict(Relative_humidity=list_of_moisture_data, DC=list_of_dc))
-        fig = px.scatter(df, x="Relative_humidity", y="DC", marginal_x="box", marginal_y="violin", trendline="ols")
-        fig.show()
-
-    def factors_affecting_dc3(self) -> None:
-        """ Finding out the trend of dc wrt wind speed
-        """
-        list_of_data = process_forestfires(self.FIRES_FILE)
-        list_of_wind = [list_of_data[k].wind for k in range(0, len(list_of_data))]
-        list_of_dc = [list_of_data[k].dc for k in range(0, len(list_of_data))]
-        df = pd.DataFrame(dict(wind=list_of_wind, DC=list_of_dc))
-        fig = px.scatter(df, x="wind", y="DC", marginal_x="box", marginal_y="violin", trendline="ols")
-        fig.show()
-
-    def factors_affecting_isi1(self) -> None:
-        """ Finding out the trend of isi wrt ffmc
-        """
-        list_of_data = process_forestfires(self.FIRES_FILE)
-        list_of_isi = [list_of_data[k].isi for k in range(0, len(list_of_data))]
-        list_of_ffmc = [list_of_data[k].ffmc for k in range(0, len(list_of_data))]
-        df = pd.DataFrame(dict(ISI=list_of_isi, FFMC=list_of_ffmc))
-        fig = px.scatter(df, x="FFMC", y="ISI", marginal_x="box", marginal_y="violin", trendline="ols")
-        fig.show()
-
-    def factors_affecting_isi2(self) -> None:
-        """ Finding out the trend of isi wrt dmc
-        """
-        list_of_data = process_forestfires(self.FIRES_FILE)
-        list_of_isi = [list_of_data[k].isi for k in range(0, len(list_of_data))]
-        list_of_dmc = [list_of_data[k].dmc for k in range(0, len(list_of_data))]
-        df = pd.DataFrame(dict(ISI=list_of_isi, DMC=list_of_dmc))
-        fig = px.scatter(df, x="DMC", y="ISI", marginal_x="box", marginal_y="violin", trendline="ols")
-        fig.show()
-
-    def factors_affecting_isi3(self) -> None:
-        """ Finding out the trend of isi wrt dc
-        """
+    def get_dataframe(self) -> Dict:
+        """Get a dictionary of data from file"""
         list_of_data = process_forestfires(self.FIRES_FILE)
         list_of_isi = [list_of_data[k].isi for k in range(0, len(list_of_data))]
         list_of_dc = [list_of_data[k].dc for k in range(0, len(list_of_data))]
-        df = pd.DataFrame(dict(ISI=list_of_isi, DC=list_of_dc))
-        fig = px.scatter(df, x="DC", y="ISI", marginal_x="box", marginal_y="violin", trendline="ols")
-        fig.show()
-
-    def factors_linked_temp(self) -> None:
-        """ Finding out the trend of temperature wrt wind, Relative Humidity
-        """
-        list_of_data = process_forestfires(self.FIRES_FILE)
-        list_of_moisture_data = [list_of_data[k].humidity for k in range(0, len(list_of_data))]
-        list_of_temperature = [list_of_data[k].temperature for k in range(0, len(list_of_data))]
+        list_of_dmc = [list_of_data[k].dmc for k in range(0, len(list_of_data))]
+        list_of_ffmc = [list_of_data[k].ffmc for k in range(0, len(list_of_data))]
+        list_of_rh = [list_of_data[k].humidity for k in range(0, len(list_of_data))]
+        list_of_temp = [list_of_data[k].temperature for k in range(0, len(list_of_data))]
         list_of_wind = [list_of_data[k].wind for k in range(0, len(list_of_data))]
-        df = pd.DataFrame(dict(Relative_humidity=list_of_moisture_data,
-                               wind=list_of_wind, temperature=list_of_temperature))
-        fig = px.scatter(df, x="temperature", y=["wind", "Relative_humidity"], trendline="ols")
+        return {"Temperature": list_of_temp, "Relative_humidity": list_of_rh, "Wind": list_of_wind,
+                "FFMC": list_of_ffmc, "DMC": list_of_dmc, "DC": list_of_dc, "ISI": list_of_isi}
+
+    def trendline(self, y_axis: str, x_axis: str) -> None:
+        """Function to give a general trend of the input values"""
+        list_of_data = self.get_dataframe()
+        df = pd.DataFrame(dict(y=list_of_data[y_axis], x=list_of_data[x_axis]))
+        fig = px.scatter(df, x="x", y="y", marginal_x="box", marginal_y="violin", trendline="ols")
         fig.show()
 
     def animate_temperatures(self) -> None:
@@ -215,6 +98,20 @@ class Model:
         df = pd.read_csv(self.TEMPERATURES_FILE)
         fig = px.bar(df, x="Source", y="Mean",
                      animation_frame="Year", animation_group="Source", range_y=[-1, 1])
+        fig.show()
+
+    def animate_temperatures2(self) -> None:
+        """" Animation to show the increase of temp over time
+        """
+        data = self.get_average_temperatures()
+        list_of_years = list(data.keys())
+        list_of_temp = list(data.values())
+        length = len(list_of_temp)
+        list_of_city = [self.CITY] * length
+        df = pd.DataFrame(dict(year=list_of_years, temp=list_of_temp,
+                               city=list_of_city))
+        fig = px.bar(df, x="city", y="temp",
+                     animation_frame="year", animation_group="city", range_y=[0, 30])
         fig.show()
 
 
