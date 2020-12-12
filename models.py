@@ -200,7 +200,8 @@ def calc_double_regression(y_0: float, b_1: float, b_2: float, x1: str, x2: str)
     x2_list = data_col[x2]  # get the column corresponding to x2
     y = []  # an empty list for the results of regression
     for i in range(len(x1_list)):  # looping through all elements in x1 and x2.
-        y.append(y_0 + b_1 * x1_list[i] + b_2 * x2_list[i])  # perform calculation of double regression using formula,
+        # perform calculation of double regression using formula,
+        y.append(y_0 + b_1 * x1_list[i] + b_2 * x2_list[i])
         # add the result into the list
 
     return y  # return the list
@@ -211,32 +212,46 @@ def model_coef_double_regression(indep_var1: str, indep_var2: str, dep_var: str)
         change of dependent variable due to changes of independent variables. Returns a tuple with 3 floats,
         in the order of constant, coefficient of 1st independent variable, coefficient of 2nd independent
         variable.
-    Instance Attributes:
-        - indep_var1: the name of the first independent variable
-        - indep_var2: the name of the second independent variable
-        - dep_var: the name of the dependent variable
+
+    Parameters:
+     - indep_var1: the name of the first independent variable
+     - indep_var2: the name of the second independent variable
+     - dep_var: the name of the dependent variable
+
     Preconditions:
-        - indep_var1 in ['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
+     - indep_var1 in ['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
                    'wind', 'rain', 'area']
-        - indep_var2 in ['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
+     - indep_var2 in ['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
                    'wind', 'rain', 'area']
-        - dep_var in ['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
+     - dep_var in ['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
                    'wind', 'rain', 'area']
+
     >>> model_coef_double_regression('forestfires.csv', 'ffmc', 'dc', 'temperature')
     (-14.839067312278363, 0.31592664888750815, 0.009291464340286205)
     """
-    data_col = process_forestfires('data/forestfires.csv')  # put data into dict of columns of each factor
+    # put data into dict of columns of each factor
+    data_col = process_forestfires('data/forestfires.csv')
+
+    # generate dataframe from data_col
     df = pd.DataFrame(data_col, columns=['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
-                                         'wind', 'rain', 'area'])  # generate dataframe from data_col
-    x = df[[indep_var1, indep_var2]]  # x is the dataframe with only columns of the 2 independent variables
-    y = df[dep_var]  # y is the dataframe with only column of the dependent variable
+                                         'wind', 'rain', 'area'])
+
+    # x is the dataframe with only columns of the 2 independent variables
+    x = df[[indep_var1, indep_var2]]
+
+    # y is the dataframe with only column of the dependent variable
+    y = df[dep_var]
+
     x = sm.add_constant(x)  # add a constant to x
 
-    model = sm.OLS(y, x).fit()  # perform OSL on x and y, find the coefficients of the independent variables
-    # that results in R squared closest to 1
-    dict_model = dict(model.params)  # get the constant and the coefficients into a dictionary
-    return (dict_model['const'], dict_model[indep_var1], dict_model[indep_var2])  # return the values of the constant,
-    # the first coefficient, and the second coefficient as a tuple
+    model = sm.OLS(y, x).fit()  # perform OSL on x and y, find the coefficients of
+    # the independent variables that results in R squared closest to 1
+
+    # get the constant and the coefficients into a dictionary
+    dict_model = dict(model.params)
+
+    # return the values of the constant, first coefficient, and second coefficient
+    return (dict_model['const'], dict_model[indep_var1], dict_model[indep_var2])
 
 
 model = Model('data/forestfires.csv', 'data/portugaltemperatures.csv', 'data/annual_csv.txt', 'Braga')
