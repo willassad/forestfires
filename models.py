@@ -221,35 +221,39 @@ class Model:
 def plot_double_regression(file_name: str, indep_var1: str, indep_var2: str, dep_var: str) -> None:
     """ Plot the scatter plot of dependent variable in a 3d graph with the 2 independent variables.
     """
-    data_col = process_fires_col(file_name)
+    data_col = process_fires_col(file_name)  # put the data into columns of each factor.
     df = pd.DataFrame(data_col, columns=['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
-                                         'wind', 'rain', 'area'])
+                                         'wind', 'rain', 'area'])  # generate dataframe of the columns of factors
     fig = px.scatter_3d(df[[indep_var1, indep_var2, dep_var]], x=indep_var1, y=indep_var2, z=dep_var, opacity=0.6)
+    # generate a 3d scatter plot, the x and y axis are value of the 2 independent variables, z-axis is the value for
+    # the dependent variable.
     fig.show()
 
 
 def plot_prediction_vs_outcome(file_name: str, dep_var: str, prediction: List[float]) -> None:
     """ Plot the prediction calculated from regression vs the actual data from dataset
     """
-    data_col = process_fires_col(file_name)
+    data_col = process_fires_col(file_name)  # put the data into columns of each factor.
     df = pd.DataFrame(data_col, columns=['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
-                                         'wind', 'rain', 'area'])
-    df['prediction'] = prediction
-    fig = px.scatter(df[[dep_var, 'prediction']], x=dep_var, y='prediction')
-    fig.show()
+                                         'wind', 'rain', 'area'])  # generate dataframe of the columns of factors
+    df['prediction'] = prediction  # add the column of predictions, since it is not in data_col
+    fig = px.scatter(df[[dep_var, 'prediction']], x=dep_var, y='prediction')  # generate scatter plot, original value
+    # from the datafile on x-axis, prediction calculated from double regression on the y-axis
+    fig.show() # show the plot on website
 
 
 def calc_double_regression(file_name: str, y_0: float, b_1: float, b_2: float, x1: str, x2: str) -> List[float]:
     """ Calculate the value of dependent variable y using equaltion of double regression.
     """
-    data_col = process_fires_col(file_name)
-    x1_list = data_col[x1]
-    x2_list = data_col[x2]
-    y = []
-    for i in range(len(x1_list)):
-        y.append(y_0 + b_1 * x1_list[i] + b_2 * x2_list[i])
+    data_col = process_fires_col(file_name)  # get the data into dict of columns of each factor
+    x1_list = data_col[x1]  # get the column corresponding to x1
+    x2_list = data_col[x2]  # get the column corresponding to x2
+    y = []  # an empty list for the results of regression
+    for i in range(len(x1_list)):  # looping through all elements in x1 and x2.
+        y.append(y_0 + b_1 * x1_list[i] + b_2 * x2_list[i])  # perform calculation of double regression using formula,
+        # add the result into the list
 
-    return y
+    return y  # return the list
 
 
 def model_coef_double_regression(file_name: str, indep_var1: str, indep_var2: str, dep_var: str) -> None:
@@ -262,16 +266,16 @@ def model_coef_double_regression(file_name: str, indep_var1: str, indep_var2: st
         :param dep_var: the dependent variable
         :return: none
     """
-
-    data_col = process_fires_col(file_name)
+    data_col = process_fires_col(file_name)  # put data into dict of columns of each factor
     df = pd.DataFrame(data_col, columns=['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
-                                         'wind', 'rain', 'area'])
-    x = df[[indep_var1, indep_var2]]
-    y = df[dep_var]
-    x = sm.add_constant(x)
+                                         'wind', 'rain', 'area'])  # generate dataframe from data_col
+    x = df[[indep_var1, indep_var2]]  # x is the dataframe with only columns of the 2 independent variables
+    y = df[dep_var]  # y is the dataframe with only column of the dependent variable
+    x = sm.add_constant(x)  # add a constant to x
 
-    model = sm.OLS(y, x).fit()
-    print(model.summary())
+    model = sm.OLS(y, x).fit()  # perform OSL on x and y, find the coefficients of the independent variables
+    # that results in R squared closest to 1
+    print(model.summary())  # print the summary page of model
 
 
 model = Model('forestfires.csv', 'portugaltemperatures.csv', 'annual_csv.txt', 'Braga')
