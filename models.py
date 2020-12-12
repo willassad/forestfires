@@ -117,54 +117,76 @@ class Model:
 
 def plot_variables(indep_var1: str, indep_var2: str, dep_var: str) -> None:
     """ Plot the scatter plot of dependent variable in a 3d graph with the 2 independent variables.
-    Instance Attributes:
-        - indep_var1: the name of the first independent variable for the double regression
-        - indep_var2: the name of the second independent variable for the double regression
-        - dep_var: the name of the dependent variable  for the double regression
+
+    Parameters:
+     - indep_var1: the name of the first independent variable for the double regression
+     - indep_var2: the name of the second independent variable for the double regression
+     - dep_var: the name of the dependent variable  for the double regression
+
     Preconditions:
-        - indep_var1 in ['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
+     - indep_var1 in ['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
                    'wind', 'rain', 'area']
-        - indep_var2 in ['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
+     - indep_var2 in ['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
                    'wind', 'rain', 'area']
-        - dep_var in ['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
+     - dep_var in ['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
                    'wind', 'rain', 'area']
     """
-    data_col = process_forestfires('data/forestfires.csv')  # put the data from datafile into list of columns of each factor.
+    # put the data from datafile into list of columns of each factor.
+    data_col = process_forestfires('data/forestfires.csv')
+
+    # generate dataframe of the columns of factors
     df = pd.DataFrame(data_col, columns=['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
-                                         'wind', 'rain', 'area'])  # generate dataframe of the columns of factors
-    fig = px.scatter_3d(df[[indep_var1, indep_var2, dep_var]], x=indep_var1, y=indep_var2, z=dep_var, opacity=0.6)
-    # generate a 3d scatter plot, the x and y axis are value of the 2 independent variables, z-axis is the value for
-    # the dependent variable.
-    fig.show()  # show the figure on website
+                                         'wind', 'rain', 'area'])
+
+    fig = px.scatter_3d(df[[indep_var1, indep_var2, dep_var]], x=indep_var1,
+                        y=indep_var2, z=dep_var, opacity=0.6)
+    # generate a 3d scatter plot, the x and y axis are value of the 2 independent variables,
+    # z-axis is the value for the dependent variable.
+    fig.show()  # show the figure in browser
 
 
 def plot_prediction_vs_outcome(dep_var: str, prediction: List[float]) -> None:
-    """ Plot the prediction of a factor calculated from regression vs the actual values of that factor from datafile.
-    Instance Attributes:
-        - dep_var: the name of the one factor that affects forestfires that we are looking at
-        - predictions: the list of predicted value of that factor that is calculated from formula of double regression
+    """ Plot the prediction of a factor calculated from regression vs the actual
+        values of that factor from datafile.
+
+    Parameters:
+     - dep_var: the name of the one factor that affects forestfires
+                that we are looking at
+     - predictions: the list of predicted value of that factor that is
+                    calculated from formula of double regression
+
     Preconditions:
-        - dep_var in ['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
+     - dep_var in ['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
                    'wind', 'rain', 'area']
-        - len(prediction) == len(process_forestfires('forestfires.csv'))
+     - len(prediction) == len(process_forestfires('forestfires.csv'))
     """
-    data_col = process_forestfires('forestfires.csv')  # put the data into columns of each factor.
-    df = pd.DataFrame(data_col, columns=['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
-                                         'wind', 'rain', 'area'])  # generate dataframe of the columns of factors
-    df['prediction'] = prediction  # add the column of predictions, since it is not in data_col
-    fig = px.scatter(df[[dep_var, 'prediction']], x=dep_var, y='prediction')  # generate scatter plot, original value
+    # put the data into columns of each factor.
+    data_col = process_forestfires('data/forestfires.csv')
+
+    # generate dataframe of the columns of factors
+    df = pd.DataFrame(data_col, columns=['ffmc', 'dmc', 'dc', 'isi', 'temperature',
+                                         'humidity', 'wind', 'rain', 'area'])
+
+    # add the column of predictions, since it is not in data_col
+    df['prediction'] = prediction
+
+    # generate scatter plot, original value
+    fig = px.scatter(df[[dep_var, 'prediction']], x=dep_var, y='prediction')
+
     # from the datafile on x-axis, prediction calculated from double regression on the y-axis
-    fig.show()  # show the plot on website
+    fig.show()  # show the plot in browser
 
 
 def calc_double_regression(y_0: float, b_1: float, b_2: float, x1: str, x2: str) -> List[float]:
     """ Calculate the value of dependent variable y using equaltion of double regression.
-    Instance Attributes:
+
+    Parameters:
         - y_0: the constant
         - b_1: the coefficient of the first variable
         - b_2: the coefficient of the second variable
         - x1: the name of the first variable
         - x2: the name of the second variable
+
     Preconditions:
         - x1 in ['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
                    'wind', 'rain', 'area']
@@ -172,7 +194,8 @@ def calc_double_regression(y_0: float, b_1: float, b_2: float, x1: str, x2: str)
                    'wind', 'rain', 'area']
         - len(process_fires_col('forestfires.csv')[x1]) == len(process_fires_col('forestfires.csv')[x2])
     """
-    data_col = process_forestfires('data/forestfires.csv')  # get the data into dict of columns of each factor
+    # get the data into dict of columns of each factor
+    data_col = process_forestfires('data/forestfires.csv')
     x1_list = data_col[x1]  # get the column corresponding to x1
     x2_list = data_col[x2]  # get the column corresponding to x2
     y = []  # an empty list for the results of regression
