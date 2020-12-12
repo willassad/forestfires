@@ -1,5 +1,5 @@
 """Main interactive file """
-from models import Model, model_coef_double_regression, plot_variables
+from models import Model
 
 
 def main() -> None:
@@ -28,12 +28,12 @@ def main() -> None:
     print('Let\'s do a double regression plotting these variables.')
     input('Press any key to continue >>> ')
 
-    result = model_coef_double_regression('temperature', 'humidity', 'isi')
+    result = model.coef_double_regression('temperature', 'humidity', 'isi')
     print('\nLet t be temperature. Let h be humidity. Let I be a function that maps temperature and humidity')
     print('to the expected ISI value. We get the following trend:')
     print(f'I(t, h) = {result[1]}t + {result[2]}h + {result[0]}')
     input('\nPress any key to open graph >>> ')
-    plot_variables('temperature', 'humidity', 'isi')
+    model.plot_variables('temperature', 'humidity', 'isi')
 
 
 if __name__ == '__main__':
