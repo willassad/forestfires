@@ -18,7 +18,7 @@ def process_forestfires(file_path: str) -> Dict[str, List]:
     Preconditions:
      - path.exists(file_path)
 
-    >>> data = process_forestfires('forestfires.csv')
+    >>> data = process_forestfires('data/forestfires.csv')
     >>> data['temperature'][0] == 8.2
     True
     """
@@ -90,7 +90,7 @@ def process_temperatures(file_path: str, city: str) -> List[PortugalTemperatureD
      - data at file_path is in the form as described by fileformats.txt
      - the city exists in the file
 
-    >>> data = process_temperatures('portugaltemperatures.csv', 'Amadora')
+    >>> data = process_temperatures('data/portugaltemperatures.csv', 'Amadora')
     >>> data[0].average_temp == 7.106
     True
     """
