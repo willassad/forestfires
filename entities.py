@@ -3,6 +3,7 @@ import csv
 from dataclasses import dataclass
 from datetime import datetime
 from typing import List, Dict
+from os import path
 
 months_dict = {'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6,
                'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12}
@@ -10,116 +11,71 @@ months_dict = {'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6,
 days_dict = {'mon': 1, 'tue': 2, 'wed': 3, 'thu': 4, 'fri': 5, 'sat': 6, 'sun': 7}
 
 
-class ForestFireData:
-    """We describe a forest fire in the same format as forestfires.csv
-       where each forest fire has a month, day, FFMC, DMC, DC, ISI,
-       temperature, RH, wind, rain, and area.
+def process_forestfires(file_path: str) -> Dict[str, List]:
+    """Process a csv file of forest fire data into a dictionary
+    containing a list of each column.
 
-    Attributes:
-        - month: the month when the fire occurred
-        - day: the day of the month the fire occurred
-        - ffmc: the Fine Fuel Moisture Code according to FWI system
-        - dmc: the Duff Moisture Code according to FWI system
-        - dc: the Drought Code according to FWI system
-        - isi: the Initial Spread Index according to FWI system
-        - temperature: the temperature of the area where the fire started
-        - humidity: the relative humidity of the area where fire started
-        - wind: the amount of wind in the area where the fire started
-        - rain: the amount of rain in the area where the fire started
-        - area: the area of forest burned
+    Preconditions:
+     - path.exists(file_path)
 
-    Representation Invariants:
-     - 0 <= self.month <= 12
-     - 1 <= self.day <= 7
-     - 0.0 <= self.ffmc <= 101.0
-     - 0.0 <= self.dmc
-     - 0.0 <= self.dc <= 1000.0
-     - 0.0 <= self.isi
-     - self.temperature.isdigit()
-     - self.humidity.isdigit()
-     - 0.0 <= self.wind
-     - 0.0 <= self.rain
-     - 0.0 <= self.area
-
-    Sample Usage:
-    >>> oct_fire = ForestFireData(timestamp=datetime(2003, 10, 2), ffmc=90.6,dmc=43.7, dc=686.9,\
-                                  isi=6.7, temperature=14.6, humidity=33, wind=1.3,\
-                                  rain=0, area=0)
+    >>> data = process_forestfires('forestfires.csv')
+    >>> data['temperature'][0] == 8.2
+    True
     """
-
-    def __init__(self, timestamp: datetime.date, ffmc: float, dmc: float,
-                 dc: float, isi: float, temperature: float, humidity: float,
-                 wind: float, rain: float, area: float):
-
-        self.timestamp = timestamp
-        self.ffmc = ffmc
-        self.dmc = dmc
-        self.dc = dc
-        self.isi = isi
-        self.temperature = temperature
-        self.humidity = humidity
-        self.wind = wind
-        self.rain = rain
-        self.area = area
-
-
-def process_forestfires(file_path: str) -> List[ForestFireData]:
-    """Process a csv file into a list of ForestFireData"""
     with open(file_path) as file:
         reader = csv.reader(file)
+        next(reader)  # skip header
 
-        # skip header
-        next(reader)
-
-        data_so_far = []  # ACCUMULATOR: update list of data
+        data_so_far = {'timestamp': [], 'ffmc': [], 'dmc': [], 'dc': [], 'isi': [],
+                       'temperature': [], 'humidity': [], 'wind': [],
+                       'rain': [], 'area': []}  # ACCUMULATOR: update dict of data
         for row in reader:
             # process each row and add to data_so_far
-            data_so_far.append(row_to_forest_data(row))
+            add_row_to_dict(data_so_far, row)
 
     return data_so_far
 
 
-def row_to_forest_data(row: List[str]) -> ForestFireData:
-    """ Convert a row of forestfires.csv into ForestFireData
+def add_row_to_dict(data: Dict[str, List], row: List[str]) -> None:
+    """Mutate dictionary data_so_far to add row
 
-    >>> sample_row = ['7','4','oct','tue','90.6','35.4','669.1','6.7','18','33','0.9','0','0']
-    >>> row_to_forest_data(sample_row)
-    ForestFireData(month=10, day=2, ffmc=90.6, dmc=35.4, dc=669.1,
-                   isi=6.7, temperature=18.0, humidity=33.0,
-                   wind=0.9, rain=0.0, area=0.0)
+    >>> d = {'timestamp': [], 'ffmc': [], 'dmc': [], 'dc': [], 'isi': [],\
+            'temperature': [], 'humidity': [], 'wind': [],\
+            'rain': [], 'area': []}
+    >>> r = ['7', '5', 'mar', 'fri', '86.2', '26.2', '94.3', '5.1', '8.2', '51', '6.7', '0', '0']
+    >>> add_row_to_dict(d, r)
+    >>> d == {'timestamp': [datetime.datetime(2000, 3, 5, 0, 0)], 'ffmc': [86.2], 'dmc': [26.2],\
+              'dc': [94.3], 'isi': [5.1], 'temperature': [8.2], 'humidity': [51.0], 'wind': [6.7],\
+              'rain': [0.0], 'area': [0.0]}
+        True
     """
-    month = months_dict[row[2]]
-    day = days_dict[row[3]]
-
-    return ForestFireData(timestamp=datetime(2000, month, day), ffmc=float(row[4]), dmc=float(row[5]),
-                          dc=float(row[6]), isi=float(row[7]), temperature=float(row[8]),
-                          humidity=float(row[9]), wind=float(row[10]),
-                          rain=float(row[11]), area=float(row[12]))
-
-
-def process_fires_col(filepath: str) -> Dict[str, List]:
-    """ Convert the row forest fire data into dictionary of columns of each factor.
-    """
-    row_data = process_forestfires(filepath)
-    dict_so_far = {'ffmc': [], 'dmc': [], 'dc': [], 'isi': [], 'temperature': [], 'humidity': [],
-                   'wind': [], 'rain': [], 'area': []}
-    for i in range(len(row_data)):
-        dict_so_far['ffmc'].append(row_data[i].ffmc)
-        dict_so_far['dmc'].append(row_data[i].dmc)
-        dict_so_far['dc'].append(row_data[i].dc)
-        dict_so_far['isi'].append(row_data[i].isi)
-        dict_so_far['temperature'].append(row_data[i].temperature)
-        dict_so_far['humidity'].append(row_data[i].humidity)
-        dict_so_far['wind'].append(row_data[i].wind)
-        dict_so_far['rain'].append(row_data[i].rain)
-        dict_so_far['area'].append(row_data[i].area)
-
-    return dict_so_far
+    data['timestamp'].append(datetime(2000, months_dict[row[2]], days_dict[row[3]]))
+    data['ffmc'].append(float(row[4]))
+    data['dmc'].append(float(row[5]))
+    data['dc'].append(float(row[6]))
+    data['isi'].append(float(row[7]))
+    data['temperature'].append(float(row[8]))
+    data['humidity'].append(float(row[9]))
+    data['wind'].append(float(row[10]))
+    data['rain'].append(float(row[11]))
+    data['area'].append(float(row[12]))
 
 
 @dataclass
 class PortugalTemperatureData:
-    """Docstring """
+    """We represent a row of temperature data in portugal by storing
+       the timestamp, city, the average temperature in that city during
+       that time, and the uncertainty.
+
+       Attributes:
+        - timestamp: the time when the temperature was recorded
+        - city: the city where the temperature was recorded
+        - average_temp: the average temperature recorded
+        - uncertainty: the uncertainty of the measurement
+
+       Representation Invariants:
+        - average_temp >= -273.0
+       """
     timestamp: datetime.date
     city: str
     average_temp: float
@@ -127,7 +83,17 @@ class PortugalTemperatureData:
 
 
 def process_temperatures(file_path: str, city: str) -> List[PortugalTemperatureData]:
-    """Process a csv file into a list of PortugalTemperatureData"""
+    """Process a csv file into a list of PortugalTemperatureData.
+
+    Preconditions:
+     - path.exists(file_path)
+     - data at file_path is in the form as described by fileformats.txt
+     - the city exists in the file
+
+    >>> data = process_temperatures('portugaltemperatures.csv', 'Amadora')
+    >>> data[0].average_temp == 7.106
+    True
+    """
     with open(file_path) as file:
         reader = csv.reader(file)
 
