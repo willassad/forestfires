@@ -222,8 +222,7 @@ class Model:
         return {key: sum(yearly_temperatures[key]) / len(yearly_temperatures[key])
                 for key in yearly_temperatures if len(yearly_temperatures[key]) > 0}
 
-    def calc_double_regression(self, y_0: float, b_1: float,
-                               b_2: float, x1: str, x2: str) -> List[float]:
+    def calc_double_regression(self, params: tuple, x1: str, x2: str) -> List[float]:
         """ Calculate the value of dependent variable y using equation of double regression.
 
         Parameters:
@@ -246,9 +245,10 @@ class Model:
         x1_list = data_col[x1]  # get the column corresponding to x1
         x2_list = data_col[x2]  # get the column corresponding to x2
         y = []  # an empty list for the results of regression
-        for i in range(len(x1_list)):  # looping through all elements in x1 and x2.
+        num = len(x1_list)
+        for i in range(num):  # looping through all elements in x1 and x2.
             # perform calculation of double regression using formula,
-            y.append(y_0 + b_1 * x1_list[i] + b_2 * x2_list[i])
+            y.append(params[0] + params[1] * x1_list[i] + params[2] * x2_list[i])
             # add the result into the list
 
         return y  # return the list
