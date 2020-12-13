@@ -2,6 +2,9 @@
 
 Forest Fire Data must be a .csv file containing the following columns:
 X,Y,month,day,FFMC,DMC,DC,ISI,temp,RH,wind,rain,area
+X | Y | month | day | FFMC | DMC | DC | ISI | temp | RH | wind | rain | area
+Content from cell 1 | Content from cell 2
+Content in the first column | Content in the second column
 
 All values should be floating point values with the exception of month and day,
 which should be strings lowercase only with the first three letters. For example,
