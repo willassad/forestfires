@@ -88,7 +88,7 @@ def process_temperatures(file_path: str, city: str) -> List[PortugalTemperatureD
 
     Preconditions:
      - os.path.exists(file_path)
-     - data at file_path is in the form as described by fileformats.txt
+     - data at file_path is in the form as described by fileformats.md
      - the city exists in the file
 
     >>> data = process_temperatures('data/portugaltemperatures2.csv', 'Amadora')
