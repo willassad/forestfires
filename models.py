@@ -13,11 +13,10 @@ pio.renderers.default = "browser"
 class Model:
     """ Main class to model and predict forest fires. """
 
-    def __init__(self, fires_file: str, temperatures_file: str, annual_file: str, city: str):
+    def __init__(self, fires_file: str, temperatures_file: str, city: str):
         # static file name paths
         self.FIRES_FILE = fires_file
         self.TEMPERATURES_FILE = temperatures_file
-        self.ANNUAL_FILE = annual_file
         self.CITY = city
 
     def dc_versus_year(self) -> None:
@@ -95,14 +94,6 @@ class Model:
         return results.iloc[0]["px_fit_results"].params
 
     def animate_temperatures(self) -> None:
-        """" Animation to show the increase of temperature over time.
-        """
-        df = pd.read_csv(self.TEMPERATURES_FILE)
-        fig = px.bar(df, x="Source", y="Mean",
-                     animation_frame="Year", animation_group="Source", range_y=[-1, 1])
-        fig.show()
-
-    def animate_temperatures2(self) -> None:
         """" Animation to show the increase of temperature over time.
         """
         data = self.get_average_temperatures()
@@ -253,4 +244,4 @@ class Model:
         return (dict_model['const'], dict_model[indep_var1], dict_model[indep_var2])
 
 
-# model = Model('data/forestfires.csv', 'data/portugaltemperatures.csv', 'data/annual_csv.txt', 'Braga')
+# model = Model('data/forestfires.csv', 'data/portugaltemperatures.csv', 'Braga')

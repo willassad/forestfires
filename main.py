@@ -4,13 +4,13 @@ from models import Model
 
 def main() -> None:
     """ Main function to run interactions with user. """
-    model = Model('data/forestfires.csv', 'data/portugaltemperatures.csv', 'data/annual_csv.txt', 'Braga')
+    model = Model('data/forestfires.csv', 'data/portugaltemperatures.csv', 'Braga')
     print('INTERACTIVE ANALYSIS OF FOREST FIRE DATA AND CLIMATE CHANGE')
     print('Location: Montesinho National Park, Portugal')
 
     print('\nAverage regional temperatures have increased in the last couple hundred years.')
     input('Press any key to open animation >>> ')
-    model.animate_temperatures2()
+    model.animate_temperatures()
 
     print('\nDC is the rating of the average moisture content of deep compact organic layers.')
     print('Drought code deeply affects forest fire intensity, severity, extent, and frequency.')
