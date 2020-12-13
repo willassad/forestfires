@@ -87,7 +87,8 @@ class Model:
                                                False)
         return parameters[0] + parameters[1] * year
 
-    def trendline(self, x_axis: str, y_axis: str, show_plot: bool = True) -> List[float]:
+    def trendline(self, x_axis: str, y_axis: str,
+                  show_plot: bool = True, start: int = None) -> List[float]:
         """Function to give a general trend of the input forest fire values.
         Graph the results by default value display and return linear
         regression parameters.
@@ -104,7 +105,15 @@ class Model:
         """
         # process data and get the appropriate variables
         data = process_forestfires(self.fires_file)
-        return plot_trendline_axis_known((x_axis, data[x_axis]), (y_axis, data[y_axis]), show_plot)
+        x_axis_data = data[x_axis]
+        y_axis_data = data[y_axis]
+
+        if start is not None:
+            x_axis_data = [x for x in x_axis_data if x > start]
+            y_axis_data = [y_axis_data[i] for i in range(
+                len(y_axis_data) - len(x_axis_data), len(y_axis_data))]
+
+        return plot_trendline_axis_known((x_axis, x_axis_data), (y_axis, y_axis_data), show_plot)
 
     def show_location(self) -> None:
         """Display map location in browser. """

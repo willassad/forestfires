@@ -1,17 +1,22 @@
 """Main interactive file."""
-from models import Model
+from models import Model, plot_trendline_axis_known
 
 
 def main() -> None:
     """ Main function to run interactions with user. """
 
     model = Model('data/forestfires.csv', 'data/portugaltemperatures.csv', 'Braga')
+    model.trendline('rain', 'ffmc', start=0)
     print('INTERACTIVE ANALYSIS OF FOREST FIRE DATA AND CLIMATE CHANGE')
     print('Location: Montesinho National Park, Portugal')
 
     print('\nAverage regional temperatures have increased in the last couple hundred years.')
     input('Press any key to open animation >>> ')
     model.animate_temperatures()
+
+    print('\nWe can also see a graph here. Press any key to open graph >>> ')
+    result = model.get_average_temperatures()
+    plot_trendline_axis_known(('time', list(result.keys())), ('temperature', list(result.values())))
 
     print('\nDC is the rating of the average moisture content of deep compact organic layers.')
     print('Drought code deeply affects forest fire intensity, severity, extent, and frequency.')
@@ -66,7 +71,6 @@ def main() -> None:
 if __name__ == '__main__':
     main()
 
-    '''
     import python_ta
 
     python_ta.check_all(config={
@@ -81,4 +85,3 @@ if __name__ == '__main__':
 
     import doctest
     doctest.testmod()
-    '''
