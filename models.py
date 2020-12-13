@@ -115,17 +115,24 @@ class Model:
         fig.show()
 
     def animate_temperatures(self) -> None:
-        """" Animation to show the increase of temperature over time.
+        """" Function to plot the average temperature of a particular city
+        for each year in an animated bar chart.
         """
+        # process data from datafile and get a dictionary datatype
         data = self.get_average_temperatures()
+        # get a list of keys and values from the dictionary
         list_of_years = list(data.keys())
         list_of_temp = list(data.values())
         length = len(list_of_temp)
         list_of_city = [self.city] * length
+        # generate dataframe from the list of keys and values from the dictionary
         df = pd.DataFrame(dict(year=list_of_years, temp=list_of_temp,
                                city=list_of_city))
+        # plot animated bar chart taking the average temperatures as the y axis,
+        # city to be the x axis and the frame of reference to be the years concerned
         fig = px.bar(df, x="city", y="temp",
                      animation_frame="year", animation_group="city", range_y=[0, 30])
+        # to display the bar chart
         fig.show()
 
     def plot_variables(self, indep_var1: str, indep_var2: str, dep_var: str) -> None:
