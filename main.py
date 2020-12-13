@@ -35,13 +35,28 @@ def main() -> None:
     input('\nPress any key to open graph >>> ')
     model.plot_variables('temperature', 'humidity', 'isi')
 
-    print('\nWould you like to examine any other variables? Press \'y\'. Otherwise, press any other key.')
-    to_continue = input()
+    to_continue = input('\nWould you like to examine any other variables? Press \'y\'. '
+                        'Otherwise, press any other key>>> ')
+
     while to_continue.upper() == 'Y':
-        print('Pick two of the following variables: ')
+        variables = ['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity', 'wind', 'rain', 'area']
+        print('\nPick two of the following variables: ')
+        print(', '.join([f'\'{v}\'' for v in variables]))
+        variable_1 = input('\nDependent Variable >>> ')
+        variable_2 = input('Independent Variable >>> ')
+
+        while variable_1 not in variables or variable_2 not in variables:
+            print('[INVALID INPUT] variable not in possible variables')
+            variable_1 = input('Dependent Variable >>> ')
+            variable_2 = input('Independent Variable >>> ')
+
+        input('\nPress any key to show graph >>> ')
+        model.trendline(variable_2, variable_1)
 
         print('\nWould you like to examine any other variables? Press \'y\'. Otherwise, press any other key.')
         to_continue = input()
+
+    print('\nHave a nice day!')
 
 
 if __name__ == '__main__':

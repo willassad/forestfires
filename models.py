@@ -40,7 +40,6 @@ class Model:
             predicted_dc = temperatures_dc[0] + temperatures_dc[1] * average_temps[year]
             list_of_times.append(year)
             list_of_dc.append(predicted_dc)
-            print(year, predicted_dc)
 
         self.trendline_axis_known(('time', list_of_times), ('dc', list_of_dc))
 
