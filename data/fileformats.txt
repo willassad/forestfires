@@ -1,3 +1,5 @@
+# Format of Data
+
 Forest Fire Data must be a .csv file containing the following columns:
 X,Y,month,day,FFMC,DMC,DC,ISI,temp,RH,wind,rain,area
 
