@@ -32,54 +32,6 @@ MONTHS_DICT = {'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6,
 DAYS_DICT = {'mon': 1, 'tue': 2, 'wed': 3, 'thu': 4, 'fri': 5, 'sat': 6, 'sun': 7}
 
 
-def process_forestfires(file_path: str) -> Dict[str, List]:
-    """Process a csv file of forest fire data into a dictionary
-    containing a list of each column.
-
-    Preconditions:
-     - os.path.exists(file_path)
-
-    >>> data = process_forestfires('data/forestfires.csv')
-    >>> data['temperature'][0] == 8.2
-    True
-    """
-    with open(file_path) as file:
-        reader = csv.reader(file)
-        next(reader)  # skip header
-
-        data_so_far = {'timestamp': [], 'ffmc': [], 'dmc': [], 'dc': [], 'isi': [],
-                       'temperature': [], 'humidity': [], 'wind': [],
-                       'rain': [], 'area': []}  # ACCUMULATOR: update dict of data
-        for row in reader:
-            # process each row and add to data_so_far
-            add_row_to_dict(data_so_far, row)
-
-    return data_so_far
-
-
-def add_row_to_dict(data: Dict[str, List], row: List[str]) -> None:
-    """Mutate dictionary data_so_far to add row
-
-    >>> d = {'timestamp': [], 'ffmc': [], 'dmc': [], 'dc': [], 'isi': [],\
-            'temperature': [], 'humidity': [], 'wind': [],\
-            'rain': [], 'area': []}
-    >>> r = ['7', '5', 'mar', 'fri', '86.2', '26.2', '94.3', '5.1', '8.2', '51', '6.7', '0', '0']
-    >>> add_row_to_dict(d, r)
-    >>> d['ffmc'] == [86.2]
-    True
-    """
-    data['timestamp'].append(datetime.datetime(2000, MONTHS_DICT[row[2]], DAYS_DICT[row[3]]))
-    data['ffmc'].append(float(row[4]))
-    data['dmc'].append(float(row[5]))
-    data['dc'].append(float(row[6]))
-    data['isi'].append(float(row[7]))
-    data['temperature'].append(float(row[8]))
-    data['humidity'].append(float(row[9]))
-    data['wind'].append(float(row[10]))
-    data['rain'].append(float(row[11]))
-    data['area'].append(float(row[12]))
-
-
 @dataclass
 class PortugalTemperatureData:
     """We represent a row of temperature data in portugal by storing
@@ -138,6 +90,54 @@ def row_to_temperature_data(row: List[str]) -> PortugalTemperatureData:
     return PortugalTemperatureData(timestamp=datetime.datetime(time_data[0], time_data[1],
                                                                time_data[2]), city=row[3],
                                    average_temp=float(row[1]), uncertainty=float(row[2]))
+
+
+def process_forestfires(file_path: str) -> Dict[str, List]:
+    """Process a csv file of forest fire data into a dictionary
+    containing a list of each column.
+
+    Preconditions:
+     - os.path.exists(file_path)
+
+    >>> data = process_forestfires('data/forestfires.csv')
+    >>> data['temperature'][0] == 8.2
+    True
+    """
+    with open(file_path) as file:
+        reader = csv.reader(file)
+        next(reader)  # skip header
+
+        data_so_far = {'timestamp': [], 'ffmc': [], 'dmc': [], 'dc': [], 'isi': [],
+                       'temperature': [], 'humidity': [], 'wind': [],
+                       'rain': [], 'area': []}  # ACCUMULATOR: update dict of data
+        for row in reader:
+            # process each row and add to data_so_far
+            add_row_to_dict(data_so_far, row)
+
+    return data_so_far
+
+
+def add_row_to_dict(data: Dict[str, List], row: List[str]) -> None:
+    """Mutate dictionary data_so_far to add row
+
+    >>> d = {'timestamp': [], 'ffmc': [], 'dmc': [], 'dc': [], 'isi': [],\
+            'temperature': [], 'humidity': [], 'wind': [],\
+            'rain': [], 'area': []}
+    >>> r = ['7', '5', 'mar', 'fri', '86.2', '26.2', '94.3', '5.1', '8.2', '51', '6.7', '0', '0']
+    >>> add_row_to_dict(d, r)
+    >>> d['ffmc'] == [86.2]
+    True
+    """
+    data['timestamp'].append(datetime.datetime(2000, MONTHS_DICT[row[2]], DAYS_DICT[row[3]]))
+    data['ffmc'].append(float(row[4]))
+    data['dmc'].append(float(row[5]))
+    data['dc'].append(float(row[6]))
+    data['isi'].append(float(row[7]))
+    data['temperature'].append(float(row[8]))
+    data['humidity'].append(float(row[9]))
+    data['wind'].append(float(row[10]))
+    data['rain'].append(float(row[11]))
+    data['area'].append(float(row[12]))
 
 
 if __name__ == '__main__':

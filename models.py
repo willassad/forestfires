@@ -38,70 +38,35 @@ class Model:
         self.temperatures_file = temperatures_file
         self.city = city
 
-    def dc_versus_year(self) -> None:
-        """ Look at the relationship between dc and year.
-        Trying to find a trend for how the dc will change as temperatures
-        change over time.
+    def plot_variables(self, indep_var1: str, indep_var2: str, dep_var: str) -> None:
+        """ Plot the scatter plot of dependent variable in a 3d graph with
+        the 2 independent variables.
 
-        For each year in TEMPERATURES_FILE in the city CITY, take
-        the temperature and find the expected DC value from that temperature
-        from the data in FIRES_FILE
-
-        Graph the results in browser.
-        """
-        # get the results of linear regression on dc vs. temperature
-        temperatures_dc = self.trendline('temperature', 'dc', False)
-        average_temps = self.get_average_temperatures()
-
-        list_of_times = []  # ACCUMULATOR: list of the years (x-axis)
-        list_of_dc = []  # ACCUMULATOR: list of predicted DC (y-axis)
-
-        # loop through each year and calculate the expected DC value
-        for year in average_temps:
-            # use results of linear regression to predict a dc value from temperature
-            predicted_dc = temperatures_dc[0] + temperatures_dc[1] * average_temps[year]
-            list_of_times.append(year)
-            list_of_dc.append(predicted_dc)
-
-        # graph the results
-        plot_trendline_axis_known(('time', list_of_times), ('dc', list_of_dc))
-
-    def get_average_temperatures(self) -> Dict[int, float]:
-        """Return a dictionary of the year corresponding to the average temperature """
-        temperatures_data = process_temperatures(self.temperatures_file, self.city)
-        yearly_temperatures = {}  # ACCUMULATOR: map each year to a list of all the
-        # temperatures recorded in that year
-
-        for row in temperatures_data:
-            year = row.timestamp.year
-            temperature = row.average_temp
-
-            # mutate list or create it if it does not exist
-            if year in yearly_temperatures:
-                yearly_temperatures[year].append(temperature)
-            else:
-                yearly_temperatures[year] = []
-
-        # return the average of all the temperatures of each year
-        return {key: sum(yearly_temperatures[key]) / len(yearly_temperatures[key])
-                for key in yearly_temperatures if len(yearly_temperatures[key]) > 0}
-
-    def predict_temperature(self, year: int) -> float:
-        """ Predict future temperature in the given year in self.CITY
+        Parameters:
+         - indep_var1: the name of the first independent variable for the double regression
+         - indep_var2: the name of the second independent variable for the double regression
+         - dep_var: the name of the dependent variable  for the double regression
 
         Preconditions:
-         - year >= min(self.get_average_temperatures().keys())
-
-         >>> model = Model('data/forestfires.csv', 'data/portugaltemperatures.csv', 'Amadora')
-         >>> model.predict_temperature(2060)
-         16.670193437009456
+         - indep_var1 in ['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
+                       'wind', 'rain', 'area']
+         - indep_var2 in ['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
+                       'wind', 'rain', 'area']
+         - dep_var in ['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
+                       'wind', 'rain', 'area']
         """
-        # get parameters of linear regression and return predicted temperature
-        temperature_data = self.get_average_temperatures()
-        parameters = plot_trendline_axis_known(('Year', list(temperature_data.keys())),
-                                               ('Temperature', list(temperature_data.values())),
-                                               False)
-        return parameters[0] + parameters[1] * year
+        # put the data from datafile into list of columns of each factor.
+        data_col = process_forestfires(self.fires_file)
+
+        # generate dataframe of the columns of factors
+        df = pd.DataFrame(data_col, columns=['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
+                                             'wind', 'rain', 'area'])
+
+        fig = px.scatter_3d(df[[indep_var1, indep_var2, dep_var]], x=indep_var1,
+                            y=indep_var2, z=dep_var, opacity=0.6)
+        # generate a 3d scatter plot, the x and y axis are value of the 2 independent variables,
+        # z-axis is the value for the dependent variable.
+        fig.show()  # show the figure in browser
 
     def trendline(self, x_axis: str, y_axis: str,
                   show_plot: bool = True, start: int = None) -> List[float]:
@@ -140,56 +105,33 @@ class Model:
         # plot the values and return the linear regression parameters
         return plot_trendline_axis_known((x_axis, x_axis_data), (y_axis, y_axis_data), show_plot)
 
-    def animate_temperatures(self) -> None:
-        """" Function to plot the average temperature of a particular city
-        for each year in an animated bar chart.
+    def dc_versus_year(self) -> None:
+        """ Look at the relationship between dc and year.
+        Trying to find a trend for how the dc will change as temperatures
+        change over time.
+
+        For each year in TEMPERATURES_FILE in the city CITY, take
+        the temperature and find the expected DC value from that temperature
+        from the data in FIRES_FILE
+
+        Graph the results in browser.
         """
-        # process data from datafile and get a dictionary datatype
-        data = self.get_average_temperatures()
-        # get a list of keys and values from the dictionary
-        list_of_years = list(data.keys())
-        list_of_temp = list(data.values())
-        length = len(list_of_temp)
-        list_of_city = [self.city] * length
-        # generate dataframe from the list of keys and values from the dictionary
-        df = pd.DataFrame(dict(year=list_of_years, temp=list_of_temp,
-                               city=list_of_city))
-        # plot animated bar chart taking the average temperatures as the y axis,
-        # city to be the x axis and the frame of reference to be the years concerned
-        fig = px.bar(df, x="city", y="temp",
-                     animation_frame="year", animation_group="city", range_y=[0, 30])
-        # to display the bar chart
-        fig.show()
+        # get the results of linear regression on dc vs. temperature
+        temperatures_dc = self.trendline('temperature', 'dc', False)
+        average_temps = self.get_average_temperatures()
 
-    def plot_variables(self, indep_var1: str, indep_var2: str, dep_var: str) -> None:
-        """ Plot the scatter plot of dependent variable in a 3d graph with
-        the 2 independent variables.
+        list_of_times = []  # ACCUMULATOR: list of the years (x-axis)
+        list_of_dc = []  # ACCUMULATOR: list of predicted DC (y-axis)
 
-        Parameters:
-         - indep_var1: the name of the first independent variable for the double regression
-         - indep_var2: the name of the second independent variable for the double regression
-         - dep_var: the name of the dependent variable  for the double regression
+        # loop through each year and calculate the expected DC value
+        for year in average_temps:
+            # use results of linear regression to predict a dc value from temperature
+            predicted_dc = temperatures_dc[0] + temperatures_dc[1] * average_temps[year]
+            list_of_times.append(year)
+            list_of_dc.append(predicted_dc)
 
-        Preconditions:
-         - indep_var1 in ['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
-                       'wind', 'rain', 'area']
-         - indep_var2 in ['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
-                       'wind', 'rain', 'area']
-         - dep_var in ['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
-                       'wind', 'rain', 'area']
-        """
-        # put the data from datafile into list of columns of each factor.
-        data_col = process_forestfires(self.fires_file)
-
-        # generate dataframe of the columns of factors
-        df = pd.DataFrame(data_col, columns=['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
-                                             'wind', 'rain', 'area'])
-
-        fig = px.scatter_3d(df[[indep_var1, indep_var2, dep_var]], x=indep_var1,
-                            y=indep_var2, z=dep_var, opacity=0.6)
-        # generate a 3d scatter plot, the x and y axis are value of the 2 independent variables,
-        # z-axis is the value for the dependent variable.
-        fig.show()  # show the figure in browser
+        # graph the results
+        plot_trendline_axis_known(('time', list_of_times), ('dc', list_of_dc))
 
     def plot_prediction_vs_outcome(self, dep_var: str, prediction: List[float]) -> None:
         """ Plot the prediction of a factor calculated from regression vs the actual
@@ -221,6 +163,64 @@ class Model:
 
         # from the datafile on x-axis, prediction calculated from double regression on the y-axis
         fig.show()  # show the plot in browser
+
+    def predict_temperature(self, year: int) -> float:
+        """ Predict future temperature in the given year in self.CITY
+
+        Preconditions:
+         - year >= min(self.get_average_temperatures().keys())
+
+         >>> model = Model('data/forestfires.csv', 'data/portugaltemperatures.csv', 'Amadora')
+         >>> model.predict_temperature(2060)
+         16.670193437009456
+        """
+        # get parameters of linear regression and return predicted temperature
+        temperature_data = self.get_average_temperatures()
+        parameters = plot_trendline_axis_known(('Year', list(temperature_data.keys())),
+                                               ('Temperature', list(temperature_data.values())),
+                                               False)
+        return parameters[0] + parameters[1] * year
+
+    def animate_temperatures(self) -> None:
+        """" Function to plot the average temperature of a particular city
+        for each year in an animated bar chart.
+        """
+        # process data from datafile and get a dictionary datatype
+        data = self.get_average_temperatures()
+        # get a list of keys and values from the dictionary
+        list_of_years = list(data.keys())
+        list_of_temp = list(data.values())
+        length = len(list_of_temp)
+        list_of_city = [self.city] * length
+        # generate dataframe from the list of keys and values from the dictionary
+        df = pd.DataFrame(dict(year=list_of_years, temp=list_of_temp,
+                               city=list_of_city))
+        # plot animated bar chart taking the average temperatures as the y axis,
+        # city to be the x axis and the frame of reference to be the years concerned
+        fig = px.bar(df, x="city", y="temp",
+                     animation_frame="year", animation_group="city", range_y=[0, 30])
+        # to display the bar chart
+        fig.show()
+
+    def get_average_temperatures(self) -> Dict[int, float]:
+        """Return a dictionary of the year corresponding to the average temperature """
+        temperatures_data = process_temperatures(self.temperatures_file, self.city)
+        yearly_temperatures = {}  # ACCUMULATOR: map each year to a list of all the
+        # temperatures recorded in that year
+
+        for row in temperatures_data:
+            year = row.timestamp.year
+            temperature = row.average_temp
+
+            # mutate list or create it if it does not exist
+            if year in yearly_temperatures:
+                yearly_temperatures[year].append(temperature)
+            else:
+                yearly_temperatures[year] = []
+
+        # return the average of all the temperatures of each year
+        return {key: sum(yearly_temperatures[key]) / len(yearly_temperatures[key])
+                for key in yearly_temperatures if len(yearly_temperatures[key]) > 0}
 
     def calc_double_regression(self, y_0: float, b_1: float,
                                b_2: float, x1: str, x2: str) -> List[float]:
