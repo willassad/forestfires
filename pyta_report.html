@@ -533,7 +533,7 @@ footer {
     <body>
         <header>
             <h1 class="title">PyTA Error Report</h1>
-            <time>Sun. Dec. 13 2020, 03:13:10 PM</time>
+            <time>Sun. Dec. 13 2020, 03:39:45 PM</time>
         </header>
         <main>
             
@@ -550,26 +550,10 @@ footer {
                     </h3>
                     <div class="content collapsible">
                         
-                        <span class="empty-placeholder">None!
-
-</span>
-                        
-                    </div>
-                </article>
-                <article class="error-output style-errors">
-                    <h3 class="category-heading">
-                        <span>Style or Convention Errors (fix: before submission)</span>
-                        <span class="slider">
-                            <button>Expand/Collapse Section</button>
-                        </span>
-                    </h3>
-                    <div class="content collapsible">
-                        
                         <div class="error-instance">
-
                             <div class="info">
-                                <span class="error-link style-error-id">
-                                    <a href="http://www.cs.toronto.edu/~david/pyta/&#35;R0201" target="_blank">&#10064; R0201 (no-self-use)</a>
+                                <span class="error-link code-error-id">
+                                    <a href="http://www.cs.toronto.edu/~david/pyta/&#35;E9999" target="_blank">&#10064; E9999 (forbidden-import)</a>
                                 </span>
                                 <span class="occurrences">
                                 1
@@ -581,40 +565,43 @@ footer {
                                 
                                 </span>
                                 <span class="slider">
-                                   <button> Expand/Collapse </button>
+                                    <button> Expand/Collapse </button>
                                 </span>
                             </div>
-
                             <div class="message-container collapsible">
                                 
                                 <div class="message">
                                     <h4 class="message-name">
-                                        [Line 118] This method does not make use of 'self', so you should remove the self parameter and move this method outside of the class (turning it into a top-level function.
+                                        [Line 6] You may not import any modules - you imported plotly.graph_objects on line 6.
                                         <span class="slider">
                                             <button style="float: right; background: #458B00;"> Expand/Collapse </button>
                                         </span>
                                     </h4>
+                                    
                                     <div class="collapsible">
-                                      
-                                      <code>  <span class="grey line-num">116</span>          <span class="grey"><span class="pygments-k">return</span> <span class="pygments-n">plot_trendline_axis_known</span><span class="pygments-p">((</span><span class="pygments-n">x_axis</span><span class="pygments-p">,</span> <span class="pygments-n">x_axis_data</span><span class="pygments-p">),</span> <span class="pygments-p">(</span><span class="pygments-n">y_axis</span><span class="pygments-p">,</span> <span class="pygments-n">y_axis_data</span><span class="pygments-p">),</span> <span class="pygments-n">show_plot</span><span class="pygments-p">)</span></span>
-  <span class="grey line-num">117</span>  <span class="grey"></span>
-  <span class="gbold line-num">118</span>      <span class="black"></span><span class="highlight-pyta"><span class="pygments-k">def</span> <span class="pygments-nf">show_location</span><span class="pygments-p">(</span><span class="pygments-bp">self</span><span class="pygments-p">)</span> <span class="pygments-o">-&gt;</span> <span class="pygments-kc">None</span><span class="pygments-p">:</span></span>
-  <span class="gbold line-num">119</span>          <span class="highlight-pyta"><span class="pygments-sd">&quot;&quot;&quot;Display map location in browser. &quot;&quot;&quot;</span></span>
-  <span class="gbold line-num">120</span>          <span class="highlight-pyta"><span class="pygments-n">df</span> <span class="pygments-o">=</span> <span class="pygments-n">px</span><span class="pygments-o">.</span><span class="pygments-n">data</span><span class="pygments-o">.</span><span class="pygments-n">gapminder</span><span class="pygments-p">()</span><span class="pygments-o">.</span><span class="pygments-n">query</span><span class="pygments-p">(</span><span class="pygments-s1">&#39;year==2020&#39;</span><span class="pygments-p">)</span></span>
-  <span class="gbold line-num">121</span>          <span class="highlight-pyta"><span class="pygments-n">fig</span> <span class="pygments-o">=</span> <span class="pygments-n">px</span><span class="pygments-o">.</span><span class="pygments-n">scatter_geo</span><span class="pygments-p">(</span><span class="pygments-n">df</span><span class="pygments-p">,</span> <span class="pygments-n">locations</span><span class="pygments-o">=</span><span class="pygments-s2">&quot;iso_alpha&quot;</span><span class="pygments-p">,</span> <span class="pygments-n">color</span><span class="pygments-o">=</span><span class="pygments-s2">&quot;Europe&quot;</span><span class="pygments-p">,</span></span>
-  <span class="gbold line-num">122</span>                               <span class="highlight-pyta"><span class="pygments-n">hover_name</span><span class="pygments-o">=</span><span class="pygments-s2">&quot;Portugal&quot;</span><span class="pygments-p">,</span> <span class="pygments-n">size</span><span class="pygments-o">=</span><span class="pygments-s2">&quot;pop&quot;</span><span class="pygments-p">,</span></span>
-  <span class="gbold line-num">123</span>                               <span class="highlight-pyta"><span class="pygments-n">projection</span><span class="pygments-o">=</span><span class="pygments-s2">&quot;natural earth&quot;</span><span class="pygments-p">)</span></span>
-  <span class="gbold line-num">124</span>          <span class="highlight-pyta"><span class="pygments-n">fig</span><span class="pygments-o">.</span><span class="pygments-n">show</span><span class="pygments-p">()</span></span>
-  <span class="grey line-num">125</span>  <span class="grey"></span>
-  <span class="grey line-num">126</span>      <span class="grey"><span class="pygments-k">def</span> <span class="pygments-nf">animate_temperatures</span><span class="pygments-p">(</span><span class="pygments-bp">self</span><span class="pygments-p">)</span> <span class="pygments-o">-&gt;</span> <span class="pygments-kc">None</span><span class="pygments-p">:</span></span>
+                                      <code>    <span class="grey line-num">4</span>  <span class="grey"><span class="pygments-kn">import</span> <span class="pygments-nn">plotly.express</span> <span class="pygments-k">as</span> <span class="pygments-nn">px</span></span>
+    <span class="grey line-num">5</span>  <span class="grey"><span class="pygments-kn">import</span> <span class="pygments-nn">plotly.io</span> <span class="pygments-k">as</span> <span class="pygments-nn">pio</span></span>
+    <span class="gbold line-num">6</span>  <span class="highlight-pyta"><span class="pygments-kn">import</span> <span class="pygments-nn">plotly.graph_objects</span> <span class="pygments-k">as</span> <span class="pygments-nn">go</span></span>
+    <span class="grey line-num">7</span>  <span class="grey"><span class="pygments-kn">import</span> <span class="pygments-nn">pandas</span> <span class="pygments-k">as</span> <span class="pygments-nn">pd</span></span>
+    <span class="grey line-num">8</span>  <span class="grey"><span class="pygments-kn">import</span> <span class="pygments-nn">statsmodels.api</span> <span class="pygments-k">as</span> <span class="pygments-nn">sm</span></span>
 </code>
-                                      
                                     </div>
+                                    
                                 </div>
                                 
                             </div>
-
                         </div>
+                        
+                    </div>
+                </article>
+                <article class="error-output style-errors">
+                    <h3 class="category-heading">
+                        <span>Style or Convention Errors (fix: before submission)</span>
+                        <span class="slider">
+                            <button>Expand/Collapse Section</button>
+                        </span>
+                    </h3>
+                    <div class="content collapsible">
                         
                         <div class="error-instance">
 
@@ -640,19 +627,19 @@ footer {
                                 
                                 <div class="message">
                                     <h4 class="message-name">
-                                        [Line 208] This function has too many parameters (6, exceeding limit 5). You should try to reduce the complexity of the function by splitting up it, or combining related objects as a single one.
+                                        [Line 210] This function has too many parameters (6, exceeding limit 5). You should try to reduce the complexity of the function by splitting up it, or combining related objects as a single one.
                                         <span class="slider">
                                             <button style="float: right; background: #458B00;"> Expand/Collapse </button>
                                         </span>
                                     </h4>
                                     <div class="collapsible">
                                       
-                                      <code>  <span class="grey line-num">206</span>          <span class="grey"><span class="pygments-n">fig</span><span class="pygments-o">.</span><span class="pygments-n">show</span><span class="pygments-p">()</span>  <span class="pygments-c1"># show the plot in browser</span></span>
-  <span class="grey line-num">207</span>  <span class="grey"></span>
-  <span class="gbold line-num">208</span>      <span class="black"><span class="pygments-k">def</span> <span class="pygments-nf">calc_double_regression</span><span class="pygments-p">(</span></span><span class="highlight-pyta"><span class="pygments-bp">self</span><span class="pygments-p">,</span> <span class="pygments-n">y_0</span><span class="pygments-p">:</span> <span class="pygments-nb">float</span><span class="pygments-p">,</span> <span class="pygments-n">b_1</span><span class="pygments-p">:</span> <span class="pygments-nb">float</span><span class="pygments-p">,</span></span>
-  <span class="gbold line-num">209</span>                                 <span class="highlight-pyta"><span class="pygments-n">b_2</span><span class="pygments-p">:</span> <span class="pygments-nb">float</span><span class="pygments-p">,</span> <span class="pygments-n">x1</span><span class="pygments-p">:</span> <span class="pygments-nb">str</span><span class="pygments-p">,</span> <span class="pygments-n">x2</span><span class="pygments-p">:</span> <span class="pygments-nb">str</span></span><span class="black"><span class="pygments-p">)</span> <span class="pygments-o">-&gt;</span> <span class="pygments-n">List</span><span class="pygments-p">[</span><span class="pygments-nb">float</span><span class="pygments-p">]:</span></span>
-  <span class="grey line-num">210</span>          <span class="grey"><span class="pygments-s2">&quot;&quot;&quot; Calculate the value of dependent variable y using equation of double regression.</span></span>
-  <span class="grey line-num">211</span>  <span class="grey"></span>
+                                      <code>  <span class="grey line-num">208</span>          <span class="grey"><span class="pygments-n">fig</span><span class="pygments-o">.</span><span class="pygments-n">show</span><span class="pygments-p">()</span>  <span class="pygments-c1"># show the plot in browser</span></span>
+  <span class="grey line-num">209</span>  <span class="grey"></span>
+  <span class="gbold line-num">210</span>      <span class="black"><span class="pygments-k">def</span> <span class="pygments-nf">calc_double_regression</span><span class="pygments-p">(</span></span><span class="highlight-pyta"><span class="pygments-bp">self</span><span class="pygments-p">,</span> <span class="pygments-n">y_0</span><span class="pygments-p">:</span> <span class="pygments-nb">float</span><span class="pygments-p">,</span> <span class="pygments-n">b_1</span><span class="pygments-p">:</span> <span class="pygments-nb">float</span><span class="pygments-p">,</span></span>
+  <span class="gbold line-num">211</span>                                 <span class="highlight-pyta"><span class="pygments-n">b_2</span><span class="pygments-p">:</span> <span class="pygments-nb">float</span><span class="pygments-p">,</span> <span class="pygments-n">x1</span><span class="pygments-p">:</span> <span class="pygments-nb">str</span><span class="pygments-p">,</span> <span class="pygments-n">x2</span><span class="pygments-p">:</span> <span class="pygments-nb">str</span></span><span class="black"><span class="pygments-p">)</span> <span class="pygments-o">-&gt;</span> <span class="pygments-n">List</span><span class="pygments-p">[</span><span class="pygments-nb">float</span><span class="pygments-p">]:</span></span>
+  <span class="grey line-num">212</span>          <span class="grey"><span class="pygments-s2">&quot;&quot;&quot; Calculate the value of dependent variable y using equation of double regression.</span></span>
+  <span class="grey line-num">213</span>  <span class="grey"></span>
 </code>
                                       
                                     </div>
@@ -686,20 +673,65 @@ footer {
                                 
                                 <div class="message">
                                     <h4 class="message-name">
-                                        [Line 232] Consider using enumerate instead of iterating with range and len
+                                        [Line 234] Consider using enumerate instead of iterating with range and len
                                         <span class="slider">
                                             <button style="float: right; background: #458B00;"> Expand/Collapse </button>
                                         </span>
                                     </h4>
                                     <div class="collapsible">
                                       
-                                      <code>  <span class="grey line-num">230</span>          <span class="grey"><span class="pygments-n">x2_list</span> <span class="pygments-o">=</span> <span class="pygments-n">data_col</span><span class="pygments-p">[</span><span class="pygments-n">x2</span><span class="pygments-p">]</span>  <span class="pygments-c1"># get the column corresponding to x2</span></span>
-  <span class="grey line-num">231</span>          <span class="grey"><span class="pygments-n">y</span> <span class="pygments-o">=</span> <span class="pygments-p">[]</span>  <span class="pygments-c1"># an empty list for the results of regression</span></span>
-  <span class="gbold line-num">232</span>          <span class="black"></span><span class="highlight-pyta"><span class="pygments-k">for</span> <span class="pygments-n">i</span> <span class="pygments-ow">in</span> <span class="pygments-nb">range</span><span class="pygments-p">(</span><span class="pygments-nb">len</span><span class="pygments-p">(</span><span class="pygments-n">x1_list</span><span class="pygments-p">)):</span>  <span class="pygments-c1"># looping through all elements in x1 and x2.</span></span>
-  <span class="gbold line-num">233</span>              <span class="highlight-pyta"><span class="pygments-c1"># perform calculation of double regression using formula,</span></span>
-  <span class="gbold line-num">234</span>              <span class="highlight-pyta"><span class="pygments-n">y</span><span class="pygments-o">.</span><span class="pygments-n">append</span><span class="pygments-p">(</span><span class="pygments-n">y_0</span> <span class="pygments-o">+</span> <span class="pygments-n">b_1</span> <span class="pygments-o">*</span> <span class="pygments-n">x1_list</span><span class="pygments-p">[</span><span class="pygments-n">i</span><span class="pygments-p">]</span> <span class="pygments-o">+</span> <span class="pygments-n">b_2</span> <span class="pygments-o">*</span> <span class="pygments-n">x2_list</span><span class="pygments-p">[</span><span class="pygments-n">i</span><span class="pygments-p">])</span></span>
-  <span class="grey line-num">235</span>              <span class="grey"><span class="pygments-c1"># add the result into the list</span></span>
-  <span class="grey line-num">236</span>  <span class="grey"></span>
+                                      <code>  <span class="grey line-num">232</span>          <span class="grey"><span class="pygments-n">x2_list</span> <span class="pygments-o">=</span> <span class="pygments-n">data_col</span><span class="pygments-p">[</span><span class="pygments-n">x2</span><span class="pygments-p">]</span>  <span class="pygments-c1"># get the column corresponding to x2</span></span>
+  <span class="grey line-num">233</span>          <span class="grey"><span class="pygments-n">y</span> <span class="pygments-o">=</span> <span class="pygments-p">[]</span>  <span class="pygments-c1"># an empty list for the results of regression</span></span>
+  <span class="gbold line-num">234</span>          <span class="black"></span><span class="highlight-pyta"><span class="pygments-k">for</span> <span class="pygments-n">i</span> <span class="pygments-ow">in</span> <span class="pygments-nb">range</span><span class="pygments-p">(</span><span class="pygments-nb">len</span><span class="pygments-p">(</span><span class="pygments-n">x1_list</span><span class="pygments-p">)):</span>  <span class="pygments-c1"># looping through all elements in x1 and x2.</span></span>
+  <span class="gbold line-num">235</span>              <span class="highlight-pyta"><span class="pygments-c1"># perform calculation of double regression using formula,</span></span>
+  <span class="gbold line-num">236</span>              <span class="highlight-pyta"><span class="pygments-n">y</span><span class="pygments-o">.</span><span class="pygments-n">append</span><span class="pygments-p">(</span><span class="pygments-n">y_0</span> <span class="pygments-o">+</span> <span class="pygments-n">b_1</span> <span class="pygments-o">*</span> <span class="pygments-n">x1_list</span><span class="pygments-p">[</span><span class="pygments-n">i</span><span class="pygments-p">]</span> <span class="pygments-o">+</span> <span class="pygments-n">b_2</span> <span class="pygments-o">*</span> <span class="pygments-n">x2_list</span><span class="pygments-p">[</span><span class="pygments-n">i</span><span class="pygments-p">])</span></span>
+  <span class="grey line-num">237</span>              <span class="grey"><span class="pygments-c1"># add the result into the list</span></span>
+  <span class="grey line-num">238</span>  <span class="grey"></span>
+</code>
+                                      
+                                    </div>
+                                </div>
+                                
+                            </div>
+
+                        </div>
+                        
+                        <div class="error-instance">
+
+                            <div class="info">
+                                <span class="error-link style-error-id">
+                                    <a href="http://www.cs.toronto.edu/~david/pyta/&#35;W0611" target="_blank">&#10064; W0611 (unused-import)</a>
+                                </span>
+                                <span class="occurrences">
+                                1
+                                
+                                 occurrence.
+                                
+                                </span>
+                                <span class="shown">
+                                
+                                </span>
+                                <span class="slider">
+                                   <button> Expand/Collapse </button>
+                                </span>
+                            </div>
+
+                            <div class="message-container collapsible">
+                                
+                                <div class="message">
+                                    <h4 class="message-name">
+                                        [Line 6] Unused plotly.graph_objects imported as go
+                                        <span class="slider">
+                                            <button style="float: right; background: #458B00;"> Expand/Collapse </button>
+                                        </span>
+                                    </h4>
+                                    <div class="collapsible">
+                                      
+                                      <code>    <span class="grey line-num">4</span>  <span class="grey"><span class="pygments-kn">import</span> <span class="pygments-nn">plotly.express</span> <span class="pygments-k">as</span> <span class="pygments-nn">px</span></span>
+    <span class="grey line-num">5</span>  <span class="grey"><span class="pygments-kn">import</span> <span class="pygments-nn">plotly.io</span> <span class="pygments-k">as</span> <span class="pygments-nn">pio</span></span>
+    <span class="gbold line-num">6</span>  <span class="highlight-pyta"><span class="pygments-kn">import</span> <span class="pygments-nn">plotly.graph_objects</span> <span class="pygments-k">as</span> <span class="pygments-nn">go</span></span>
+    <span class="grey line-num">7</span>  <span class="grey"><span class="pygments-kn">import</span> <span class="pygments-nn">pandas</span> <span class="pygments-k">as</span> <span class="pygments-nn">pd</span></span>
+    <span class="grey line-num">8</span>  <span class="grey"><span class="pygments-kn">import</span> <span class="pygments-nn">statsmodels.api</span> <span class="pygments-k">as</span> <span class="pygments-nn">sm</span></span>
 </code>
                                       
                                     </div>

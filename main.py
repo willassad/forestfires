@@ -6,7 +6,6 @@ def main() -> None:
     """ Main function to run interactions with user. """
 
     model = Model('data/forestfires.csv', 'data/portugaltemperatures.csv', 'Braga')
-    model.trendline('rain', 'ffmc', start=0)
     print('INTERACTIVE ANALYSIS OF FOREST FIRE DATA AND CLIMATE CHANGE')
     print('Location: Montesinho National Park, Portugal')
 

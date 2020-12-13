@@ -89,8 +89,11 @@ class Model:
 
     def trendline(self, x_axis: str, y_axis: str,
                   show_plot: bool = True, start: int = None) -> List[float]:
-        """Function to give a general trend of the input forest fire values.
-        Graph the results by default value display and return linear
+        """Function to give a general trend of the input forest fire values
+        starting at the x-value given by start. The default value None, means
+        that the domain will not be restricted at all.
+
+        Graph the results by default value show_plot and return linear
         regression parameters.
 
         Preconditions:
@@ -98,30 +101,28 @@ class Model:
                       'wind', 'rain', 'area']
          - y_axis in ['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
                       'wind', 'rain', 'area']
+         - show_plot is True or show_plot is False
 
         >>> model = Model('data/forestfires.csv', 'data/portugaltemperatures.csv', 'Braga')
         >>> model.trendline('humidity', 'isi', False)
         [10.6615826813379, -0.03702835507934204]
         """
-        # process data and get the appropriate variables
+        # process data and get the appropriate x/y values
         data = process_forestfires(self.fires_file)
         x_axis_data = data[x_axis]
         y_axis_data = data[y_axis]
 
+        # if the domain is restricted by start
         if start is not None:
+            # get all the x-values greater than given starting point
             x_axis_data = [x for x in x_axis_data if x > start]
+
+            # get all the corresponding y-values
             y_axis_data = [y_axis_data[i] for i in range(
                 len(y_axis_data) - len(x_axis_data), len(y_axis_data))]
 
+        # plot the values and return the linear regression parameters
         return plot_trendline_axis_known((x_axis, x_axis_data), (y_axis, y_axis_data), show_plot)
-
-    def show_location(self) -> None:
-        """Display map location in browser. """
-        df = px.data.gapminder().query('year==2020')
-        fig = px.scatter_geo(df, locations="iso_alpha", color="Europe",
-                             hover_name="Portugal", size="pop",
-                             projection="natural earth")
-        fig.show()
 
     def animate_temperatures(self) -> None:
         """" Function to plot the average temperature of a particular city
