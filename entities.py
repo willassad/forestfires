@@ -1,5 +1,23 @@
-""" Entities """
+"""forestfires Reading Data
 
+Overview and Description
+========================
+
+This Python module contains the data class definitions and functions to read
+datasets located in the data subdirectory. In some cases, data is read as
+dictionaries with the key as the column name and values as a list of values.
+In other cases, we use Python's dataclass to represent a row of temperature
+data.
+
+Copyright and Usage Information
+===============================
+
+All forms of distribution of this code, whether as given or with any changes,
+are expressly prohibited.
+
+This file is Copyright (c) 2020 Will Assad, Jessica Zhai,
+Raghav Banka, and Fatimeh Hassan.
+"""
 import csv
 from dataclasses import dataclass
 import datetime

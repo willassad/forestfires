@@ -1,4 +1,21 @@
-"""Main interactive file."""
+"""forestfires Main Interactive File
+
+Overview and Description
+========================
+
+This Python file is the main interactive file of our program where a user
+can interact with our data and perform computations. This is a simple
+console implementation using plotly.
+
+Copyright and Usage Information
+===============================
+
+All forms of distribution of this code, whether as given or with any changes,
+are expressly prohibited.
+
+This file is Copyright (c) 2020 Will Assad, Jessica Zhai,
+Raghav Banka, and Fatimeh Hassan.
+"""
 from models import Model, plot_trendline_axis_known
 
 

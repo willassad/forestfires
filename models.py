@@ -1,5 +1,21 @@
-"""Models """
+"""forestfires Data Computations and Modelling
 
+Overview and Description
+========================
+
+This Python module contains a class to model a location where forest fires
+occur and predict how future increase in temperatures will affect these
+fires. This includes methods that graph and animate the data.
+
+Copyright and Usage Information
+===============================
+
+All forms of distribution of this code, whether as given or with any changes,
+are expressly prohibited.
+
+This file is Copyright (c) 2020 Will Assad, Jessica Zhai,
+Raghav Banka, and Fatimeh Hassan.
+"""
 from typing import Dict, List, Tuple
 import plotly.express as px
 import plotly.io as pio
