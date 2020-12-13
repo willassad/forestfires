@@ -222,15 +222,15 @@ class Model:
         return {key: sum(yearly_temperatures[key]) / len(yearly_temperatures[key])
                 for key in yearly_temperatures if len(yearly_temperatures[key]) > 0}
 
-    def calc_double_regression(self, params: tuple, x1: str, x2: str) -> List[float]:
+    def calc_double_regression(self, params: Tuple[float, float, float],
+                               x1: str, x2: str) -> List[float]:
         """ Calculate the value of dependent variable y using equation of double regression.
 
         Parameters:
-            - y_0: the constant
-            - b_1: the coefficient of the first variable
-            - b_2: the coefficient of the second variable
-            - x1: the name of the first variable
-            - x2: the name of the second variable
+            - params: the constant, coefficient of the first variable
+                and the coefficient of the second variable
+            - x1: the name of the first independent variable
+            - x2: the name of the second independent variable
 
         Preconditions:
             - x1 in ['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
@@ -239,16 +239,22 @@ class Model:
                        'wind', 'rain', 'area']
             - len(process_fires_col('forestfires.csv')[x1]) ==
               len(process_fires_col('forestfires.csv')[x2])
+
+        >>> model = Model('data/forestfires.csv', 'data/portugaltemperatures.csv', 'Amadora')
+        >>> result = model.calc_double_regression((2, 3, 4), 'ffmc', 'dmc')
+        >>> result[1] == 415.4
+        True
         """
         # get the data into dict of columns of each factor
         data_col = process_forestfires(self.fires_file)
+
         x1_list = data_col[x1]  # get the column corresponding to x1
         x2_list = data_col[x2]  # get the column corresponding to x2
-        y = []  # an empty list for the results of regression
-        num = len(x1_list)
-        for i in range(num):  # looping through all elements in x1 and x2.
+        y = []  # ACCUMULATOR: the results of regression
+
+        for i, val in enumerate(x1_list):  # looping through all elements in x1 and x2.
             # perform calculation of double regression using formula,
-            y.append(params[0] + params[1] * x1_list[i] + params[2] * x2_list[i])
+            y.append(params[0] + params[1] * val + params[2] * x2_list[i])
             # add the result into the list
 
         return y  # return the list
