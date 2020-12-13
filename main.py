@@ -35,6 +35,14 @@ def main() -> None:
     input('\nPress any key to open graph >>> ')
     model.plot_variables('temperature', 'humidity', 'isi')
 
+    print('\nWould you like to examine any other variables? Press \'y\'. Otherwise, press any other key.')
+    to_continue = input()
+    while to_continue.upper() == 'Y':
+        print('Pick two of the following variables: ')
+
+        print('\nWould you like to examine any other variables? Press \'y\'. Otherwise, press any other key.')
+        to_continue = input()
+
 
 if __name__ == '__main__':
     main()
