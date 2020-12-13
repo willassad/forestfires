@@ -2,22 +2,25 @@
 
 from typing import Dict, List, Tuple
 import plotly.express as px
+import plotly.io as pio
 import pandas as pd
 import statsmodels.api as sm
 from entities import process_temperatures, process_forestfires
-import plotly.io as pio
 
 pio.renderers.default = 'browser'
 
 
 class Model:
     """ Main class to model and predict forest fires. """
+    fires_file: str
+    temperatures_file: str
+    city: str
 
-    def __init__(self, fires_file: str, temperatures_file: str, city: str):
+    def __init__(self, fires_file: str, temperatures_file: str, city: str) -> None:
         # static file name paths
-        self.FIRES_FILE = fires_file
-        self.TEMPERATURES_FILE = temperatures_file
-        self.CITY = city
+        self.fires_file = fires_file
+        self.temperatures_file = temperatures_file
+        self.city = city
 
     def dc_versus_year(self) -> None:
         """ Look at the relationship between dc and year.
@@ -49,7 +52,7 @@ class Model:
 
     def get_average_temperatures(self) -> Dict[int, float]:
         """Return a dictionary of the year corresponding to the average temperature """
-        temperatures_data = process_temperatures(self.TEMPERATURES_FILE, self.CITY)
+        temperatures_data = process_temperatures(self.temperatures_file, self.city)
         yearly_temperatures = {}  # ACCUMULATOR: map each year to a list of all the
         # temperatures recorded in that year
 
@@ -80,10 +83,11 @@ class Model:
         # get parameters of linear regression and return predicted temperature
         temperature_data = self.get_average_temperatures()
         parameters = plot_trendline_axis_known(('Year', list(temperature_data.keys())),
-                                               ('Temperature', list(temperature_data.values())), False)
+                                               ('Temperature', list(temperature_data.values())),
+                                               False)
         return parameters[0] + parameters[1] * year
 
-    def trendline(self, x_axis: str, y_axis: str, display=True) -> List[float]:
+    def trendline(self, x_axis: str, y_axis: str, show_plot: bool = True) -> List[float]:
         """Function to give a general trend of the input forest fire values.
         Graph the results by default value display and return linear
         regression parameters.
@@ -95,13 +99,12 @@ class Model:
                       'wind', 'rain', 'area']
 
         >>> model = Model('data/forestfires.csv', 'data/portugaltemperatures.csv', 'Braga')
-        >>> regression_parameters = model.trendline('humidity', 'isi', False)
-        >>> list(regression_parameters) == [10.6615826813379, -0.03702835507934204]
-        True
+        >>> model.trendline('humidity', 'isi', False)
+        [10.6615826813379, -0.03702835507934204]
         """
         # process data and get the appropriate variables
-        data = process_forestfires(self.FIRES_FILE)
-        return plot_trendline_axis_known((x_axis, data[x_axis]), (y_axis, data[y_axis]), display)
+        data = process_forestfires(self.fires_file)
+        return plot_trendline_axis_known((x_axis, data[x_axis]), (y_axis, data[y_axis]), show_plot)
 
     def animate_temperatures(self) -> None:
         """" Animation to show the increase of temperature over time.
@@ -110,7 +113,7 @@ class Model:
         list_of_years = list(data.keys())
         list_of_temp = list(data.values())
         length = len(list_of_temp)
-        list_of_city = [self.CITY] * length
+        list_of_city = [self.city] * length
         df = pd.DataFrame(dict(year=list_of_years, temp=list_of_temp,
                                city=list_of_city))
         fig = px.bar(df, x="city", y="temp",
@@ -118,7 +121,8 @@ class Model:
         fig.show()
 
     def plot_variables(self, indep_var1: str, indep_var2: str, dep_var: str) -> None:
-        """ Plot the scatter plot of dependent variable in a 3d graph with the 2 independent variables.
+        """ Plot the scatter plot of dependent variable in a 3d graph with
+        the 2 independent variables.
 
         Parameters:
          - indep_var1: the name of the first independent variable for the double regression
@@ -134,7 +138,7 @@ class Model:
                        'wind', 'rain', 'area']
         """
         # put the data from datafile into list of columns of each factor.
-        data_col = process_forestfires(self.FIRES_FILE)
+        data_col = process_forestfires(self.fires_file)
 
         # generate dataframe of the columns of factors
         df = pd.DataFrame(data_col, columns=['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
@@ -162,7 +166,7 @@ class Model:
          - len(prediction) == len(process_forestfires('forestfires.csv'))
         """
         # put the data into columns of each factor.
-        data_col = process_forestfires(self.FIRES_FILE)
+        data_col = process_forestfires(self.fires_file)
 
         # generate dataframe of the columns of factors
         df = pd.DataFrame(data_col, columns=['ffmc', 'dmc', 'dc', 'isi', 'temperature',
@@ -177,7 +181,8 @@ class Model:
         # from the datafile on x-axis, prediction calculated from double regression on the y-axis
         fig.show()  # show the plot in browser
 
-    def calc_double_regression(self, y_0: float, b_1: float, b_2: float, x1: str, x2: str) -> List[float]:
+    def calc_double_regression(self, y_0: float, b_1: float,
+                               b_2: float, x1: str, x2: str) -> List[float]:
         """ Calculate the value of dependent variable y using equation of double regression.
 
         Parameters:
@@ -192,10 +197,11 @@ class Model:
                        'wind', 'rain', 'area']
             - x2 in ['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
                        'wind', 'rain', 'area']
-            - len(process_fires_col('forestfires.csv')[x1]) == len(process_fires_col('forestfires.csv')[x2])
+            - len(process_fires_col('forestfires.csv')[x1]) ==
+              len(process_fires_col('forestfires.csv')[x2])
         """
         # get the data into dict of columns of each factor
-        data_col = process_forestfires(self.FIRES_FILE)
+        data_col = process_forestfires(self.fires_file)
         x1_list = data_col[x1]  # get the column corresponding to x1
         x2_list = data_col[x2]  # get the column corresponding to x2
         y = []  # an empty list for the results of regression
@@ -207,9 +213,10 @@ class Model:
         return y  # return the list
 
     def coef_double_regression(self, indep_var1: str, indep_var2: str, dep_var: str) -> tuple:
-        """ given 2 independent variable name and 1 dependent variable name, use statsmodel.OLS to model the
-            change of dependent variable due to changes of independent variables. Returns a tuple with 3 floats,
-            in the order of constant, coefficient of 1st independent variable, coefficient of 2nd independent
+        """ given 2 independent variable names and 1 dependent variable name, use
+            statsmodel.OLS to model the change of dependent variable due to changes
+            of independent variables. Returns a tuple with 3 floats, in the order of constant,
+            coefficient of 1st independent variable, coefficient of 2nd independent
             variable.
 
         Parameters:
@@ -225,12 +232,12 @@ class Model:
          - dep_var in ['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
                        'wind', 'rain', 'area']
 
-        >>> m = Model('data/forestfires.csv', 'data/portugaltemperatures.csv', 'data/annual_csv.txt', 'Braga')
+        >>> m = Model('data/forestfires.csv', 'data/portugaltemperatures.csv', 'Braga')
         >>> m.coef_double_regression('ffmc', 'dc', 'temperature')
         (-14.839067312278363, 0.31592664888750815, 0.009291464340286205)
         """
         # put data into dict of columns of each factor
-        data_col = process_forestfires(self.FIRES_FILE)
+        data_col = process_forestfires(self.fires_file)
 
         # generate dataframe from data_col
         df = pd.DataFrame(data_col, columns=['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
@@ -254,22 +261,42 @@ class Model:
         return (dict_model['const'], dict_model[indep_var1], dict_model[indep_var2])
 
 
-def plot_trendline_axis_known(x_axis: Tuple[str, List[float]],
-                              y_axis: Tuple[str, List[float]], display=True) -> List[float]:
+def plot_trendline_axis_known(x_axis: Tuple[str, List[float]], y_axis: Tuple[str, List[float]],
+                              show_plot: bool = True) -> List[float]:
     """Function to give a general trend of the input values
 
     >>> x_axis_data = [1.0, 2.0, 3.0, 4.0, 5.0]
     >>> y_axis_data = [2.0, 4.0, 6.0, 8.0, 10.0]
-    >>> result = plot_trendline_axis_known(('x-axis', x_axis_data), ('y-axis', y_axis_data), False)
-    >>> int(result[0]) == 0 and int(result[1]) == 2
-    True
+    >>> plot_trendline_axis_known(('x-axis', x_axis_data), ('y-axis', y_axis_data), False)
+    [-3.1086244689504383e-15, 2.0000000000000004]
     """
     df = pd.DataFrame({x_axis[0]: x_axis[1], y_axis[0]: y_axis[1]})
-    fig = px.scatter(df, x=x_axis[0], y=y_axis[0], marginal_x="box", marginal_y="violin", trendline="ols")
+    fig = px.scatter(df, x=x_axis[0], y=y_axis[0], marginal_x="box",
+                     marginal_y="violin", trendline="ols")
 
-    if display:  # default is to display plot
+    if show_plot:  # default is to display plot
         fig.show()
 
     # get results of linear regression and return
     results = px.get_trendline_results(fig)
-    return results.iloc[0]["px_fit_results"].params
+    return list(results.iloc[0]["px_fit_results"].params)
+
+
+if __name__ == '__main__':
+    import python_ta
+
+    python_ta.check_all(config={
+        'max-line-length': 100,
+        'extra-imports': ['python_ta.contracts', 'typing', 'plotly.express',
+                          'pandas', 'statsmodels.api', 'entities', 'plotly.io'],
+        'allowed-io': ['process_forestfires', 'process_temperatures']
+    })
+
+    import python_ta.contracts
+
+    python_ta.contracts.DEBUG_CONTRACTS = False
+    python_ta.contracts.check_all_contracts()
+
+    import doctest
+
+    doctest.testmod()

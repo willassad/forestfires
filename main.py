@@ -24,13 +24,15 @@ def main() -> None:
     input('Press any key to open graph >>> ')
     model.dc_versus_year()
 
-    print('\nWe might expect a fire in conditions with low humidity and high temperature to spread quicker.')
+    print('\nWe might expect a fire in conditions with low humidity '
+          'and high temperature to spread quicker.')
     print('ISI is a measure of how quickly a forest fire spreads.')
     print('Let\'s do a double regression plotting these variables.')
     input('Press any key to continue >>> ')
 
     result = model.coef_double_regression('temperature', 'humidity', 'isi')
-    print('\nLet t be temperature. Let h be humidity. Let I be a function that maps temperature and humidity')
+    print('\nLet t be temperature. Let h be humidity. Let I be a function that '
+          'maps temperature and humidity')
     print('to the expected ISI value. We get the following trend:')
     print(f'I(t, h) = {result[1]}t + {result[2]}h + {result[0]}')
     input('\nPress any key to open graph >>> ')
@@ -54,7 +56,8 @@ def main() -> None:
         input('\nPress any key to show graph >>> ')
         model.trendline(variable_2, variable_1)
 
-        print('\nWould you like to examine any other variables? Press \'y\'. Otherwise, press any other key.')
+        print('\nWould you like to examine any other variables? Press \'y\'. '
+              'Otherwise, press any other key.')
         to_continue = input()
 
     print('\nHave a nice day!')
@@ -62,3 +65,20 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
+
+    '''
+    import python_ta
+
+    python_ta.check_all(config={
+        'max-line-length': 100,
+        'extra-imports': ['models', 'python_ta.contracts'],
+        'allowed-io': ['main']
+    })
+
+    import python_ta.contracts
+    python_ta.contracts.DEBUG_CONTRACTS = False
+    python_ta.contracts.check_all_contracts()
+
+    import doctest
+    doctest.testmod()
+    '''
