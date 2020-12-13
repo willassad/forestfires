@@ -106,6 +106,14 @@ class Model:
         data = process_forestfires(self.fires_file)
         return plot_trendline_axis_known((x_axis, data[x_axis]), (y_axis, data[y_axis]), show_plot)
 
+    def show_location(self) -> None:
+        """Display map location in browser. """
+        df = px.data.gapminder().query('year==2020')
+        fig = px.scatter_geo(df, locations="iso_alpha", color="Europe",
+                             hover_name="Portugal", size="pop",
+                             projection="natural earth")
+        fig.show()
+
     def animate_temperatures(self) -> None:
         """" Animation to show the increase of temperature over time.
         """
