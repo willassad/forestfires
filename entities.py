@@ -2,14 +2,16 @@
 
 import csv
 from dataclasses import dataclass
-from datetime import datetime
+import datetime
 from typing import List, Dict
-from os import path
 
-months_dict = {'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6,
+# this import statement is used in preconditions, but PythonTA and PyCharm cannot detect this.
+import os
+
+MONTHS_DICT = {'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6,
                'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12}
 
-days_dict = {'mon': 1, 'tue': 2, 'wed': 3, 'thu': 4, 'fri': 5, 'sat': 6, 'sun': 7}
+DAYS_DICT = {'mon': 1, 'tue': 2, 'wed': 3, 'thu': 4, 'fri': 5, 'sat': 6, 'sun': 7}
 
 
 def process_forestfires(file_path: str) -> Dict[str, List]:
@@ -17,7 +19,7 @@ def process_forestfires(file_path: str) -> Dict[str, List]:
     containing a list of each column.
 
     Preconditions:
-     - path.exists(file_path)
+     - os.path.exists(file_path)
 
     >>> data = process_forestfires('data/forestfires.csv')
     >>> data['temperature'][0] == 8.2
@@ -45,12 +47,10 @@ def add_row_to_dict(data: Dict[str, List], row: List[str]) -> None:
             'rain': [], 'area': []}
     >>> r = ['7', '5', 'mar', 'fri', '86.2', '26.2', '94.3', '5.1', '8.2', '51', '6.7', '0', '0']
     >>> add_row_to_dict(d, r)
-    >>> d == {'timestamp': [datetime.datetime(2000, 3, 5, 0, 0)], 'ffmc': [86.2], 'dmc': [26.2],\
-              'dc': [94.3], 'isi': [5.1], 'temperature': [8.2], 'humidity': [51.0], 'wind': [6.7],\
-              'rain': [0.0], 'area': [0.0]}
-        True
+    >>> d['ffmc'] == [86.2]
+    True
     """
-    data['timestamp'].append(datetime(2000, months_dict[row[2]], days_dict[row[3]]))
+    data['timestamp'].append(datetime.datetime(2000, MONTHS_DICT[row[2]], DAYS_DICT[row[3]]))
     data['ffmc'].append(float(row[4]))
     data['dmc'].append(float(row[5]))
     data['dc'].append(float(row[6]))
@@ -75,9 +75,9 @@ class PortugalTemperatureData:
         - uncertainty: the uncertainty of the measurement
 
        Representation Invariants:
-        - average_temp >= -273.0
+        - self.average_temp >= -273.0
        """
-    timestamp: datetime.date
+    timestamp: datetime.datetime
     city: str
     average_temp: float
     uncertainty: float
@@ -87,11 +87,11 @@ def process_temperatures(file_path: str, city: str) -> List[PortugalTemperatureD
     """Process a csv file into a list of PortugalTemperatureData.
 
     Preconditions:
-     - path.exists(file_path)
+     - os.path.exists(file_path)
      - data at file_path is in the form as described by fileformats.txt
      - the city exists in the file
 
-    >>> data = process_temperatures('data/portugaltemperatures.csv', 'Amadora')
+    >>> data = process_temperatures('data/portugaltemperatures2.csv', 'Amadora')
     >>> data[0].average_temp == 7.106
     True
     """
@@ -112,12 +112,29 @@ def row_to_temperature_data(row: List[str]) -> PortugalTemperatureData:
 
     >>> example_row = ['1753-01-01', '7.106', '5.358', 'Amadora', 'Portugal', '39.38N', '8.32W']
     >>> result = row_to_temperature_data(example_row)
-    >>> result == PortugalTemperatureData(timestamp=datetime.datetime(1753, 1, 1, 0, 0),\
-                  city='Amadora', average_temp=7.106, uncertainty=5.358)
+    >>> result.uncertainty == 5.358
     True
     """
     time_data = [int(x) for x in row[0].split('-')]
 
-    return PortugalTemperatureData(timestamp=datetime(time_data[0], time_data[1],
-                                   time_data[2]), city=row[3], average_temp=float(row[1]),
-                                   uncertainty=float(row[2]))
+    return PortugalTemperatureData(timestamp=datetime.datetime(time_data[0], time_data[1],
+                                                               time_data[2]), city=row[3],
+                                   average_temp=float(row[1]), uncertainty=float(row[2]))
+
+
+if __name__ == '__main__':
+    import python_ta
+
+    python_ta.check_all(config={
+        'max-line-length': 100,
+        'extra-imports': ['python_ta.contracts', 'dataclasses', 'datetime', 'os', 'typing', 'csv'],
+        'allowed-io': ['process_forestfires', 'process_temperatures'],
+        'disable': ['W0611']
+    })
+
+    import python_ta.contracts
+    python_ta.contracts.DEBUG_CONTRACTS = False
+    python_ta.contracts.check_all_contracts()
+
+    import doctest
+    doctest.testmod()

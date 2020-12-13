@@ -1,9 +1,10 @@
-"""Main interactive file """
+"""Main interactive file."""
 from models import Model
 
 
 def main() -> None:
     """ Main function to run interactions with user. """
+
     model = Model('data/forestfires.csv', 'data/portugaltemperatures.csv', 'Braga')
     print('INTERACTIVE ANALYSIS OF FOREST FIRE DATA AND CLIMATE CHANGE')
     print('Location: Montesinho National Park, Portugal')

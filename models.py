@@ -7,7 +7,7 @@ import statsmodels.api as sm
 from entities import process_temperatures, process_forestfires
 import plotly.io as pio
 
-pio.renderers.default = "browser"
+pio.renderers.default = 'browser'
 
 
 class Model:
@@ -28,69 +28,80 @@ class Model:
         the temperature and find the expected DC value from that temperature
         from the data in FIRES_FILE
 
-        Graph the results.
+        Graph the results in browser.
         """
+        # get the results of linear regression on dc vs. temperature
         temperatures_dc = self.trendline('temperature', 'dc', False)
         average_temps = self.get_average_temperatures()
 
-        list_of_times = []  # ACCUMULATOR
-        list_of_dc = []  # ACCUMULATOR
+        list_of_times = []  # ACCUMULATOR: list of the years (x-axis)
+        list_of_dc = []  # ACCUMULATOR: list of predicted DC (y-axis)
 
+        # loop through each year and calculate the expected DC value
         for year in average_temps:
+            # use results of linear regression to predict a dc value from temperature
             predicted_dc = temperatures_dc[0] + temperatures_dc[1] * average_temps[year]
             list_of_times.append(year)
             list_of_dc.append(predicted_dc)
 
-        self.trendline_axis_known(('time', list_of_times), ('dc', list_of_dc))
+        # graph the results
+        plot_trendline_axis_known(('time', list_of_times), ('dc', list_of_dc))
 
     def get_average_temperatures(self) -> Dict[int, float]:
         """Return a dictionary of the year corresponding to the average temperature """
         temperatures_data = process_temperatures(self.TEMPERATURES_FILE, self.CITY)
-        yearly_temperatures = {}
+        yearly_temperatures = {}  # ACCUMULATOR: map each year to a list of all the
+        # temperatures recorded in that year
 
         for row in temperatures_data:
             year = row.timestamp.year
             temperature = row.average_temp
 
+            # mutate list or create it if it does not exist
             if year in yearly_temperatures:
                 yearly_temperatures[year].append(temperature)
             else:
                 yearly_temperatures[year] = []
 
+        # return the average of all the temperatures of each year
         return {key: sum(yearly_temperatures[key]) / len(yearly_temperatures[key])
                 for key in yearly_temperatures if len(yearly_temperatures[key]) > 0}
 
-    def predict_temperature(self, year) -> None:
-        """ Predict future temperature in the given year """
-        temperature_data = self.get_average_temperatures()
-        df = pd.DataFrame(dict(time=list(temperature_data.keys()), temperature=temperature_data.values()))
-        fig = px.scatter(df, x="time", y="temperature", marginal_x="box", marginal_y="violin", trendline="ols")
+    def predict_temperature(self, year: int) -> float:
+        """ Predict future temperature in the given year in self.CITY
 
-        results = px.get_trendline_results(fig)
-        parameters = results.iloc[0]['px_fit_results'].params
+        Preconditions:
+         - year >= min(self.get_average_temperatures().keys())
+
+         >>> model = Model('data/forestfires.csv', 'data/portugaltemperatures.csv', 'Amadora')
+         >>> model.predict_temperature(2060)
+         16.670193437009456
+        """
+        # get parameters of linear regression and return predicted temperature
+        temperature_data = self.get_average_temperatures()
+        parameters = plot_trendline_axis_known(('Year', list(temperature_data.keys())),
+                                               ('Temperature', list(temperature_data.values())), False)
         return parameters[0] + parameters[1] * year
 
     def trendline(self, x_axis: str, y_axis: str, display=True) -> List[float]:
-        """Function to give a general trend of the input values"""
+        """Function to give a general trend of the input forest fire values.
+        Graph the results by default value display and return linear
+        regression parameters.
+
+        Preconditions:
+         - x_axis in ['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
+                      'wind', 'rain', 'area']
+         - y_axis in ['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity',
+                      'wind', 'rain', 'area']
+
+        >>> model = Model('data/forestfires.csv', 'data/portugaltemperatures.csv', 'Braga')
+        >>> regression_parameters = model.trendline('humidity', 'isi', False)
+        >>> list(regression_parameters) == [10.6615826813379, -0.03702835507934204]
+        True
+        """
+        # process data and get the appropriate variables
         data = process_forestfires(self.FIRES_FILE)
-        df = pd.DataFrame({x_axis: data[x_axis], y_axis: data[y_axis]})
-        fig = px.scatter(df, x=x_axis, y=y_axis, marginal_x="box", marginal_y="violin", trendline="ols")
-
-        if display:
-            fig.show()
-
-        results = px.get_trendline_results(fig)
-        return results.iloc[0]["px_fit_results"].params
-
-    def trendline_axis_known(self, x_axis: Tuple[str, List[float]],
-                             y_axis: Tuple[str, List[float]]) -> List[float]:
-        """Function to give a general trend of the input values"""
-        df = pd.DataFrame({x_axis[0]: x_axis[1], y_axis[0]: y_axis[1]})
-        fig = px.scatter(df, x=x_axis[0], y=y_axis[0], marginal_x="box", marginal_y="violin", trendline="ols")
-        fig.show()
-
-        results = px.get_trendline_results(fig)
-        return results.iloc[0]["px_fit_results"].params
+        return plot_trendline_axis_known((x_axis, data[x_axis]), (y_axis, data[y_axis]), display)
 
     def animate_temperatures(self) -> None:
         """" Animation to show the increase of temperature over time.
@@ -243,4 +254,22 @@ class Model:
         return (dict_model['const'], dict_model[indep_var1], dict_model[indep_var2])
 
 
-# model = Model('data/forestfires.csv', 'data/portugaltemperatures.csv', 'Braga')
+def plot_trendline_axis_known(x_axis: Tuple[str, List[float]],
+                              y_axis: Tuple[str, List[float]], display=True) -> List[float]:
+    """Function to give a general trend of the input values
+
+    >>> x_axis_data = [1.0, 2.0, 3.0, 4.0, 5.0]
+    >>> y_axis_data = [2.0, 4.0, 6.0, 8.0, 10.0]
+    >>> result = plot_trendline_axis_known(('x-axis', x_axis_data), ('y-axis', y_axis_data), False)
+    >>> int(result[0]) == 0 and int(result[1]) == 2
+    True
+    """
+    df = pd.DataFrame({x_axis[0]: x_axis[1], y_axis[0]: y_axis[1]})
+    fig = px.scatter(df, x=x_axis[0], y=y_axis[0], marginal_x="box", marginal_y="violin", trendline="ols")
+
+    if display:  # default is to display plot
+        fig.show()
+
+    # get results of linear regression and return
+    results = px.get_trendline_results(fig)
+    return results.iloc[0]["px_fit_results"].params
