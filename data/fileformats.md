@@ -11,7 +11,7 @@ Example set with one row:
 
 X | Y | month | day | FFMC | DMC | DC | ISI | temp | RH | wind | rain | area
 - | - | ----- | --- | ---- | --- | -- | --- | ---- | -- | ---- | ---- | ----
-8 | 6 |  sep  | tue |  91  |129.5|63.6|  7  | 13.1 | 63 |  5.4 |  0   |  0
+8 | 6 | sep | tue | 91 | 129.5 | 63.6 | 7 | 13.1 | 63 | 5.4 | 0 | 0
 
 
 Temperature Data should be a .csv file containing the following columns:
