@@ -62,6 +62,7 @@ def main() -> None:
     to_continue = input('\nWould you like to examine any other variables? Press \'y\'. '
                         'Otherwise, press any other key>>> ')
 
+    # let user continue to examine other variables until other key is pressed
     while to_continue.upper() == 'Y':
         variables = ['ffmc', 'dmc', 'dc', 'isi', 'temperature', 'humidity', 'wind', 'rain', 'area']
         print('\nPick two of the following variables: ')
@@ -69,6 +70,7 @@ def main() -> None:
         variable_1 = input('\nDependent Variable >>> ')
         variable_2 = input('Independent Variable >>> ')
 
+        # loop until valid variables are selected as input
         while variable_1 not in variables or variable_2 not in variables:
             print('[INVALID INPUT] variable not in possible variables')
             variable_1 = input('Dependent Variable >>> ')
